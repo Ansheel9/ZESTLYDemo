@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZESTLY — Client Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700;9..40,900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#000;--bg1:#0A0A0A;--bg2:#111;--bg3:#181818;--border:#1E1E1E;--bsub:#141414;--t1:#fff;--t2:#888;--t3:#444;--green:#9EFF00;--amber:#FF9500;--red:#FF3B30;--blue:#3B82F6;--purple:#A78BFA;--sw:220px;--th:56px}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;overflow:hidden}
+.app{display:flex;height:100vh}
+.sidebar{width:var(--sw);min-width:var(--sw);height:100vh;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg);z-index:10;overflow-y:auto}
+.s-logo{height:var(--th);display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--border);letter-spacing:.2em;font-weight:700;font-size:13px;flex-shrink:0}
+.s-logo span{opacity:.3;margin-left:8px;font-weight:300;font-size:11px;letter-spacing:.1em}
+.s-client{padding:18px 24px;border-bottom:1px solid var(--bsub);flex-shrink:0}
+.s-client-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.s-client-name{font-size:13px;font-weight:600}
+.s-tag{display:inline-block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-top:3px;border:1px solid var(--green);padding:1px 6px}
+.s-nav{flex:1;padding:12px 0}
+.s-sec{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);padding:0 24px;margin:14px 0 6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 24px;cursor:pointer;font-size:11px;font-weight:500;color:var(--t2);letter-spacing:.08em;transition:color .15s,background .15s;border-left:2px solid transparent;text-transform:uppercase}
+.nav-item:hover{color:var(--t1);background:var(--bg1)}
+.nav-item.active{color:var(--t1);border-left-color:var(--t1);background:var(--bg2)}
+.nav-ico{width:14px;height:14px;opacity:.6;flex-shrink:0}
+.nav-item.active .nav-ico{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;background:var(--amber);color:#000;font-weight:700;padding:1px 5px}
+.nav-badge-p{margin-left:auto;font-size:9px;background:var(--purple);color:#000;font-weight:700;padding:1px 5px}
+.s-bot{padding:14px 24px;border-top:1px solid var(--bsub);flex-shrink:0;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+/* ── USER PROFILE ── */
+.s-profile{padding:13px 16px;border-top:1px solid var(--bsub);flex-shrink:0;display:flex;align-items:center;gap:9px;cursor:pointer;transition:background .15s;position:relative}
+.s-profile:hover{background:var(--bg1)}
+.s-profile-ava{width:28px;height:28px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;letter-spacing:.05em}
+.s-profile-info{flex:1;min-width:0}
+.s-profile-name{font-size:11px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-profile-email{font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.s-profile-arr{font-size:10px;color:var(--t3);flex-shrink:0}
+/* ── ASSET PROJECT TAG ── */
+.a-proj{position:absolute;bottom:6px;left:6px;font-size:8px;letter-spacing:.07em;text-transform:uppercase;padding:2px 5px;background:rgba(0,0,0,.88);color:var(--purple);border:1px solid var(--purple)}
+/* ── PROJ HISTORY ── */
+.proj-hist-hdr{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px}
+.proj-hist-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.proj-card-hist{background:var(--bg);padding:18px 24px;transition:background .15s;opacity:.75}
+.proj-card-hist:hover{background:var(--bg1);opacity:1}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:var(--th);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:14px;flex-shrink:0}
+.tb-title{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+.tb-sep{width:1px;height:16px;background:var(--border)}
+.tb-sub{font-size:11px;color:var(--t2);letter-spacing:.04em}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:18px}
+.tb-date{font-size:11px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase}
+.btn-p{background:var(--t1);color:var(--bg);border:none;padding:7px 18px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.btn-p:hover{opacity:.8}
+.btn-s{background:transparent;color:var(--t2);border:1px solid var(--border);padding:7px 18px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.btn-s:hover{border-color:var(--t2);color:var(--t1)}
+.content{flex:1;overflow-y:auto;padding:28px 32px}
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn .2s ease forwards}
+.screen-full{display:none;height:100%}
+.screen-full.active{display:flex;animation:fadeIn .2s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── DIANA ── */
+.diana-wrap{flex:1;display:flex;overflow:hidden;height:100%}
+.diana-main{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);min-width:0}
+.diana-hdr{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.diana-avatar{width:32px;height:32px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--t1);flex-shrink:0}
+.diana-name{font-size:14px;font-weight:600}
+.diana-status{font-size:10px;color:var(--green);letter-spacing:.08em;display:flex;align-items:center;gap:5px}
+.diana-status::before{content:'';display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%}
+.diana-status-badge{margin-left:auto;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);border:1px solid var(--purple);padding:2px 8px}
+.diana-msgs{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.msg{display:flex;gap:10px;max-width:75%}
+.msg-d{align-self:flex-start}
+.msg-u{align-self:flex-end;flex-direction:row-reverse}
+.msg-ava{width:26px;height:26px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px}
+.msg-d .msg-ava{background:var(--bg2);color:var(--t1)}
+.msg-u .msg-ava{background:var(--t1);color:var(--bg)}
+.msg-body{display:flex;flex-direction:column;gap:4px}
+.msg-u .msg-body{align-items:flex-end}
+.msg-sender{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.msg-bubble{padding:10px 14px;font-size:13px;line-height:1.6;color:var(--t1)}
+.msg-d .msg-bubble{background:var(--bg2);border:1px solid var(--border)}
+.msg-u .msg-bubble{background:var(--bg3);border:1px solid var(--border)}
+.msg-time{font-size:9px;color:var(--t3);letter-spacing:.05em}
+.msg-action-row{display:flex;gap:7px;margin-top:4px;flex-wrap:wrap}
+.msg-action{background:transparent;border:1px solid var(--border);color:var(--t2);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
+.msg-action:hover{border-color:var(--t1);color:var(--t1)}
+.msg-action.primary{border-color:var(--green);color:var(--green)}
+.msg-action.primary:hover{background:var(--green);color:#000}
+.typing-dots{display:flex;gap:3px;padding:4px 0}
+.typing-dots span{width:4px;height:4px;background:var(--t3);border-radius:50%;animation:blink 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+/* Diana input area — with voice + upload */
+.diana-input-area{padding:14px 24px 16px;border-top:1px solid var(--border);flex-shrink:0}
+.diana-input-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.di-tool-btn{width:30px;height:30px;background:transparent;border:1px solid var(--border);color:var(--t2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
+.di-tool-btn:hover{border-color:var(--t2);color:var(--t1)}
+.di-tool-btn.voice-active{border-color:var(--red);color:var(--red);background:rgba(255,59,48,.08);animation:pulse-border 1.5s infinite}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,0)}50%{box-shadow:0 0 0 3px rgba(255,59,48,.2)}}
+.di-tool-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.di-tool-sep{width:1px;height:16px;background:var(--border);margin:0 4px}
+.diana-input-row{display:flex;gap:8px;align-items:flex-end}
+.diana-input{flex:1;background:var(--bg1);border:1px solid var(--border);color:var(--t1);padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;resize:none;min-height:40px}
+.diana-input:focus{border-color:var(--t2)}
+.diana-send{background:var(--t1);color:var(--bg);border:none;padding:10px 18px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s;flex-shrink:0;height:40px}
+.diana-send:hover{opacity:.8}
+.attach-preview{display:none;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);margin-bottom:8px}
+.attach-preview.show{display:flex}
+.attach-name{font-size:11px;color:var(--t2);flex:1}
+.attach-remove{background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1}
+.attach-remove:hover{color:var(--t1)}
+
+/* Diana right panel */
+.diana-right{width:280px;min-width:280px;display:flex;flex-direction:column;overflow-y:auto;background:var(--bg)}
+.dr-section{border-bottom:1px solid var(--border);flex-shrink:0}
+.dr-sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none}
+.dr-sec-hdr:hover{background:var(--bg1)}
+.dr-sec-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t2);font-weight:500}
+.dr-sec-count{font-size:9px;color:var(--t3)}
+.dr-sec-toggle{font-size:11px;color:var(--t3);transition:transform .2s}
+.dr-sec-toggle.open{transform:rotate(180deg)}
+.dr-body{overflow:hidden;transition:max-height .25s ease}
+.dr-body.collapsed{max-height:0!important}
+.dr-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;transition:background .15s}
+.dr-item:hover{background:var(--bg1)}
+.dr-ava{width:22px;height:22px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;color:var(--t2)}
+.dr-item-name{font-size:12px;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.dr-item-sub{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr-unread{width:16px;height:16px;background:var(--amber);color:#000;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dr-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dr-dot-g{background:var(--green)}.dr-dot-y{background:var(--amber)}.dr-dot-gr{background:var(--t3)}
+.dr-ch-hash{font-size:13px;color:var(--t3);flex-shrink:0}
+.dr-kb-icon{width:22px;height:22px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--t2);flex-shrink:0}
+.dr-metric{display:flex;flex-direction:column;gap:2px;padding:8px 16px;border-bottom:1px solid var(--bsub);cursor:pointer;transition:background .15s}
+.dr-metric:last-child{border-bottom:none}
+.dr-metric:hover{background:var(--bg1)}
+.dr-m-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.dr-m-val{font-size:20px;font-weight:700;line-height:1.1}
+.dr-m-d{font-size:10px}.dr-m-d.up{color:var(--green)}.dr-m-d.dn{color:var(--red)}
+.dr-search{margin:8px 16px;background:var(--bg1);border:1px solid var(--border);color:var(--t1);padding:7px 10px;font-size:11px;font-family:'DM Sans',sans-serif;outline:none;width:calc(100% - 32px)}
+.dr-search:focus{border-color:var(--t2)}
+
+/* ── HUB SHARED ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:26px}
+.stat-box{background:var(--bg);padding:22px}
+.stat-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.stat-num{font-size:32px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-d{font-size:11px;color:var(--t2)}.stat-d.up{color:var(--green)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.panel{background:var(--bg);padding:22px}
+.panel-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bsub)}
+.sec-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.brand-colors{display:flex;gap:7px;margin-bottom:16px}
+.swatch{width:28px;height:28px;border:1px solid var(--border)}
+.swatch-lbl{font-size:9px;color:var(--t3);margin-top:2px}
+.brand-tag{display:inline-block;border:1px solid var(--border);padding:2px 9px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin:0 4px 4px 0}
+.up-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bsub)}
+.up-item:last-child{border-bottom:none}
+.up-date{font-size:11px;color:var(--t2);min-width:52px}
+.up-name{font-size:13px;font-weight:500}
+.up-ch{font-size:9px;color:var(--t3);margin-top:2px;letter-spacing:.05em;text-transform:uppercase}
+.up-status{margin-left:auto;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;font-weight:600;white-space:nowrap}
+.st-prod{color:var(--blue);border:1px solid var(--blue)}
+.st-mood{color:var(--purple);border:1px solid var(--purple)}
+.st-appr{color:var(--green);border:1px solid var(--green)}
+
+/* ── ACTIONABLE RECOMMENDATIONS ── */
+.rec-section{margin-bottom:26px}
+.rec-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rec-section-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.rec-section-meta{font-size:10px;color:var(--t3);letter-spacing:.05em}
+.rec-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)}
+.rec-card{background:var(--bg1);padding:20px;border-left:2px solid transparent;transition:background .15s;position:relative}
+.rec-card:hover{background:var(--bg2)}
+.rc-trend{border-left-color:var(--green)}
+.rc-pdp{border-left-color:var(--amber)}
+.rc-roas{border-left-color:var(--blue)}
+.rc-seasonal{border-left-color:var(--purple)}
+.rec-card-type{font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.rc-trend .rec-card-type{color:var(--green)}
+.rc-pdp .rec-card-type{color:var(--amber)}
+.rc-roas .rec-card-type{color:var(--blue)}
+.rc-seasonal .rec-card-type{color:var(--purple)}
+.rec-card-sku{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);background:var(--bg3);padding:1px 6px;margin-bottom:8px;display:inline-block}
+.rec-card-title{font-size:14px;font-weight:600;margin-bottom:6px;line-height:1.3}
+.rec-card-body{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:14px}
+.rec-card-body strong{color:var(--t1);font-weight:500}
+.rec-card-footer{display:flex;align-items:center;gap:10px}
+.rec-card-btn{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border:none}
+.rc-trend .rec-card-btn{background:var(--green);color:#000}
+.rc-trend .rec-card-btn:hover{opacity:.8}
+.rc-pdp .rec-card-btn{background:var(--amber);color:#000}
+.rc-pdp .rec-card-btn:hover{opacity:.8}
+.rc-roas .rec-card-btn{background:var(--blue);color:#fff}
+.rc-roas .rec-card-btn:hover{opacity:.8}
+.rc-seasonal .rec-card-btn{background:var(--purple);color:#000}
+.rc-seasonal .rec-card-btn:hover{opacity:.8}
+.rec-card-dismiss{font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:none;color:var(--t3);cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .15s;padding:6px 0}
+.rec-card-dismiss:hover{color:var(--t1)}
+.rec-card-age{position:absolute;top:14px;right:16px;font-size:9px;color:var(--t3);letter-spacing:.05em}
+.rec-card-impact{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3);margin-top:10px}
+.rec-card-impact-bar{flex:1;height:2px;background:var(--border);max-width:60px}
+.rec-card-impact-fill{height:100%}
+.rc-trend .rec-card-impact-fill{background:var(--green)}
+.rc-pdp .rec-card-impact-fill{background:var(--amber)}
+.rc-roas .rec-card-impact-fill{background:var(--blue)}
+.rc-seasonal .rec-card-impact-fill{background:var(--purple)}
+
+/* ── REST ── */
+.brief-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);margin-bottom:32px}
+.b-step{background:var(--bg);padding:13px;text-align:center;cursor:pointer}
+.b-step-num{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:2px}
+.b-step-name{font-size:11px;color:var(--t2);font-weight:500}
+.b-step.active{background:var(--bg3)}
+.b-step.active .b-step-num{color:var(--green)}
+.b-step.active .b-step-name{color:var(--t1)}
+.b-step.done .b-step-num,.b-step.done .b-step-name{color:var(--t3)}
+.form-h1{font-size:24px;font-weight:300;margin-bottom:5px}
+.form-sub{font-size:13px;color:var(--t2);margin-bottom:26px}
+.form-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--t2);margin-bottom:6px;display:block}
+.form-input{width:100%;background:var(--bg1);border:1px solid var(--border);color:var(--t1);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--t1)}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:20px}
+.form-opt{background:var(--bg);padding:14px 17px;cursor:pointer;font-size:13px;color:var(--t2);font-weight:500;transition:all .15s}
+.form-opt:hover{background:var(--bg2);color:var(--t1)}
+.form-opt.sel{background:var(--t1);color:var(--bg)}
+.form-opt-sub{font-size:10px;margin-top:2px;opacity:.6}
+.brief-nav{display:flex;gap:11px;margin-top:26px}
+.dir-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:20px}
+.dir-card{background:var(--bg);cursor:pointer;transition:background .15s}
+.dir-card:hover{background:var(--bg1)}
+.dir-card.sel{background:var(--bg2);outline:1px solid var(--t1)}
+.dir-mood{height:175px;position:relative;overflow:hidden}
+.mood1{background:linear-gradient(135deg,#0A0A0A,#1A1A1A,#080808)}.mood2{background:linear-gradient(135deg,#1A0A00,#2A1000,#150800)}.mood3{background:linear-gradient(135deg,#000A1A,#001020,#000814)}
+.dir-mood-lbl{position:absolute;bottom:12px;left:13px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.dir-check{position:absolute;top:9px;right:9px;width:18px;height:18px;background:var(--t1);display:none;align-items:center;justify-content:center;font-size:9px;color:var(--bg)}
+.dir-card.sel .dir-check{display:flex}
+.dir-body{padding:16px;border-top:1px solid var(--bsub)}
+.dir-name{font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.dir-rat{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px}
+.pal{display:flex;gap:5px;margin-bottom:12px}
+.pal-dot{width:13px;height:13px;border:1px solid var(--border)}
+.dir-meta{font-size:10px;color:var(--t3)}
+.prog-row{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.prog-track{flex:1;height:2px;background:var(--border)}
+.prog-fill{height:100%;background:var(--green)}
+.prog-txt{font-size:12px;font-weight:700;white-space:nowrap}
+.ch-tabs{display:flex;gap:1px;background:var(--border);margin-bottom:20px}
+.ch-tab{padding:8px 16px;background:var(--bg);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);cursor:pointer;font-weight:500;transition:all .15s}
+.ch-tab:hover{background:var(--bg2);color:var(--t1)}
+.ch-tab.active{background:var(--t1);color:var(--bg)}
+.asset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.asset{background:var(--bg);aspect-ratio:4/5;position:relative;overflow:hidden;cursor:pointer}
+.asset-ph{width:100%;height:100%;background:var(--bg2);display:flex;align-items:center;justify-content:center;text-align:center}
+.asset-ph-txt{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--t3)}
+.asset-ov{position:absolute;bottom:0;left:0;right:0;padding:9px;background:linear-gradient(transparent,rgba(0,0,0,.95));display:flex;gap:5px;opacity:0;transition:opacity .2s}
+.asset:hover .asset-ov{opacity:1}
+.abtn{flex:1;padding:5px 0;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.abtn-a{background:var(--green);color:#000}.abtn-r{background:transparent;border:1px solid var(--t3);color:var(--t2)}
+.a-badge{position:absolute;top:6px;left:6px;font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:2px 5px;background:rgba(0,0,0,.85);color:var(--t2);border:1px solid var(--border)}
+.a-appr{position:absolute;top:6px;right:6px;font-size:9px;background:var(--green);color:#000;font-weight:700;padding:2px 5px}
+.a-rej{position:absolute;top:6px;right:6px;font-size:9px;background:var(--red);color:#fff;font-weight:700;padding:2px 5px}
+.cal-hdr{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.cal-month{font-size:21px;font-weight:300;letter-spacing:.05em}
+.cal-nav-btn{background:transparent;border:1px solid var(--border);color:var(--t2);width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .15s}
+.cal-nav-btn:hover{border-color:var(--t1);color:var(--t1)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border)}
+.cal-dh{background:var(--bg);padding:8px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);text-align:center}
+.cal-d{background:var(--bg);min-height:72px;padding:6px;cursor:pointer;transition:background .15s}
+.cal-d:hover{background:var(--bg1)}.cal-d.empty{cursor:default}
+.cal-d.today .cal-num{background:var(--t1);color:var(--bg);width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cal-num{font-size:11px;color:var(--t2);margin-bottom:4px;font-weight:500}
+.ce{font-size:9px;padding:2px 4px;margin-bottom:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ce-p{background:rgba(59,130,246,.2);color:var(--blue);border-left:2px solid var(--blue)}
+.ce-a{background:rgba(158,255,0,.15);color:var(--green);border-left:2px solid var(--green)}
+.ce-w{background:rgba(255,149,0,.15);color:var(--amber);border-left:2px solid var(--amber)}
+.cal-leg{display:flex;gap:20px;margin-top:12px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t2)}
+.leg-dot{width:7px;height:7px}
+.p-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:26px}
+.p-kpi{background:var(--bg);padding:24px}
+.p-kpi-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.p-kpi-val{font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.p-kpi-sub{font-size:11px;color:var(--t2)}
+.chart-bars{display:flex;align-items:flex-end;gap:7px;height:100px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bar{width:100%;background:var(--bg3);min-height:4px;transition:background .15s}.bar:hover{background:var(--t1)}.bar.hi{background:var(--green)}
+.bar-lbl{font-size:9px;color:var(--t3);text-align:center}
+.d-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.d-table th{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--t3);text-align:left;padding:6px 0;border-bottom:1px solid var(--border);font-weight:500}
+.d-table td{font-size:12px;padding:10px 0;border-bottom:1px solid var(--bsub);color:var(--t1)}
+.d-table td:not(:first-child){color:var(--t2)}
+.p-bar{display:flex;align-items:center;gap:6px}
+.p-track{flex:1;height:2px;background:var(--border)}
+.p-fill{height:100%;background:var(--t1)}.p-fill.hi{background:var(--green)}
+.pf-rec{border:1px solid var(--border);padding:20px;background:var(--bg1)}
+.pf-rec-lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:9px}
+.pf-rec-h{font-size:16px;font-weight:500;margin-bottom:6px}
+.pf-rec-txt{font-size:12px;color:var(--t2);line-height:1.7}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border)}
+/* ── LIBRARY ── */
+.lib-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.lib-search{flex:1;max-width:280px;background:var(--bg1);border:1px solid var(--border);color:var(--t1);padding:8px 12px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none}
+.lib-search:focus{border-color:var(--t2)}
+.lib-cats{display:flex;gap:1px;background:var(--border)}
+.lib-cat{padding:8px 13px;background:var(--bg);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);cursor:pointer;transition:all .15s;font-weight:500}
+.lib-cat:hover{background:var(--bg2);color:var(--t1)}
+.lib-cat.active{background:var(--t1);color:var(--bg)}
+.lib-sort{background:var(--bg1);border:1px solid var(--border);color:var(--t2);padding:8px 12px;font-size:10px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;letter-spacing:.08em;text-transform:uppercase}
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.lib-card{background:var(--bg1);aspect-ratio:3/4;position:relative;overflow:hidden;cursor:pointer}
+.lib-card:hover .lib-overlay{opacity:1}
+.lib-card:hover .lib-select{opacity:1}
+.lib-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.lib-sku{position:absolute;top:8px;left:8px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,0,0,.85);border:1px solid var(--border);color:var(--t2);padding:2px 6px}
+.lib-cat-tag{position:absolute;top:8px;right:8px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;font-weight:600}
+.lct-kurta{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid var(--purple)}
+.lct-shirt{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid var(--blue)}
+.lct-suit{background:rgba(255,149,0,.12);color:var(--amber);border:1px solid var(--amber)}
+.lct-linen{background:rgba(158,255,0,.12);color:var(--green);border:1px solid var(--green)}
+.lct-wedding{background:rgba(255,45,85,.12);color:var(--guerrilla);border:1px solid var(--guerrilla)}
+.lib-info{position:absolute;bottom:0;left:0;right:0;padding:10px;background:linear-gradient(transparent,rgba(0,0,0,.95))}
+.lib-prod-name{font-size:11px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.lib-date{font-size:9px;color:var(--t3);letter-spacing:.06em}
+.lib-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;gap:7px;opacity:0;transition:opacity .2s}
+.lib-act{background:var(--t1);color:var(--bg);border:none;padding:6px 11px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.lib-act-s{background:transparent;color:var(--t1);border:1px solid rgba(255,255,255,.3);padding:6px 11px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.lib-select{position:absolute;top:8px;left:8px;width:16px;height:16px;background:transparent;border:1.5px solid var(--t2);cursor:pointer;opacity:0;transition:opacity .2s}
+.lib-count{font-size:10px;color:var(--t3);letter-spacing:.05em;margin-left:auto}
+/* ── INTEGRATIONS ── */
+.int-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.int-search{flex:1;max-width:320px;background:var(--bg1);border:1px solid var(--border);color:var(--t1);padding:8px 12px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none}
+.int-search:focus{border-color:var(--t2)}
+.int-sec{margin-bottom:28px}
+.int-sec-hdr{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bsub)}
+.int-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.int-card{background:var(--bg1);padding:16px;display:flex;flex-direction:column;gap:8px;transition:background .15s;cursor:pointer}
+.int-card:hover{background:var(--bg2)}
+.int-top{display:flex;align-items:center;justify-content:space-between}
+.int-icon{width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;letter-spacing:.05em;color:var(--t2);flex-shrink:0}
+.int-badge{font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;font-weight:700}
+.int-badge-conn{color:var(--green);border:1px solid var(--green)}
+.int-badge-soon{color:var(--t3);border:1px solid var(--border)}
+.int-name{font-size:12px;font-weight:600;color:var(--t1)}
+.int-desc{font-size:10px;color:var(--t3);line-height:1.5}
+.int-btn{background:transparent;border:1px solid var(--border);color:var(--t2);padding:5px 10px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;align-self:flex-start;margin-top:auto}
+.int-btn:hover{border-color:var(--t1);color:var(--t1)}
+.int-btn-conn{border-color:var(--green);color:var(--green)}
+.int-btn-conn:hover{background:rgba(158,255,0,.08)}
+.int-btn-soon{opacity:.4;cursor:not-allowed}
+.int-count-row{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.int-stat{font-size:11px;color:var(--t2)}.int-stat strong{color:var(--t1)}
+.proj-list{display:flex;flex-direction:column;gap:1px;background:var(--border)}
+.proj-card{background:var(--bg1);padding:22px 24px;transition:background .15s}
+.proj-card:hover{background:var(--bg2)}
+.proj-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.proj-info{flex:1}
+.proj-title-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.proj-title{font-size:15px;font-weight:700;letter-spacing:.02em}
+.proj-meta{font-size:11px;color:var(--t2);letter-spacing:.03em}
+.proj-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.proj-steps{display:flex;align-items:flex-start;margin-bottom:12px}
+.step-node{display:flex;flex-direction:column;align-items:center;min-width:56px}
+.step-dot{width:9px;height:9px;flex-shrink:0;transition:background .2s,border-color .2s}
+.step-dot-done{background:var(--t1);border:1.5px solid var(--t1)}
+.step-dot-active{background:var(--green);border:1.5px solid var(--green);box-shadow:0 0 6px rgba(158,255,0,.35)}
+.step-dot-pending{background:transparent;border:1.5px solid var(--t3)}
+.step-lbl{font-size:8px;letter-spacing:.07em;text-transform:uppercase;margin-top:5px;text-align:center;line-height:1.4;max-width:58px}
+.step-lbl-done{color:var(--t2)}
+.step-lbl-active{color:var(--green);font-weight:700}
+.step-lbl-pending{color:var(--t3)}
+.step-conn{flex:1;height:1.5px;margin-top:4px;min-width:10px}
+.step-conn-done{background:var(--t1)}
+.step-conn-active{background:linear-gradient(90deg,var(--t1) 0%,var(--border) 100%)}
+.step-conn-pending{background:var(--border)}
+.proj-prog-row{display:flex;align-items:center;gap:12px}
+.proj-prog-track{flex:1;height:2px;background:var(--border)}
+.proj-prog-fill{height:100%}
+.proj-prog-fill-white{background:var(--t1)}
+.proj-prog-fill-green{background:var(--green)}
+.proj-prog-fill-amber{background:var(--amber)}
+.proj-pct{font-size:11px;font-weight:700;letter-spacing:.05em;min-width:34px;text-align:right}
+.proj-due{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.proj-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.proj-section-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+/* ── UPCOMING TASKS ── */
+:root{--guerrilla:#FF2D55}
+.task-section{margin-bottom:26px}
+.task-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.task-section-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.task-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.task-card{background:var(--bg1);padding:16px 18px;position:relative;cursor:pointer;transition:background .15s}
+.task-card:hover{background:var(--bg2)}
+.task-card-type{font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tc-content .task-card-type{color:var(--blue)}
+.tc-delivery .task-card-type{color:var(--green)}
+.tc-report .task-card-type{color:var(--amber)}
+.tc-meeting .task-card-type{color:var(--purple)}
+.task-card-title{font-size:13px;font-weight:600;margin-bottom:4px;line-height:1.3}
+.task-card-sub{font-size:11px;color:var(--t2);margin-bottom:12px;line-height:1.4}
+.task-card-footer{display:flex;align-items:center;justify-content:space-between}
+.task-card-date{font-size:10px;letter-spacing:.06em;font-weight:500}
+.tc-today .task-card-date{color:var(--green)}
+.tc-tomorrow .task-card-date{color:var(--amber)}
+.tc-upcoming .task-card-date{color:var(--t3)}
+.task-card-action{font-size:9px;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--t2);padding:3px 9px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
+.task-card-action:hover{border-color:var(--t1);color:var(--t1)}
+.task-card-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tc-content .task-card-dot{background:var(--blue)}
+.tc-delivery .task-card-dot{background:var(--green)}
+.tc-report .task-card-dot{background:var(--amber)}
+.tc-meeting .task-card-dot{background:var(--purple)}
+/* ── GUERRILLA CARDS ── */
+.rc-guerrilla{border-left-color:var(--guerrilla)}
+.rc-guerrilla .rec-card-type{color:var(--guerrilla)}
+.rc-guerrilla .rec-card-btn{background:var(--guerrilla);color:#fff}
+.rc-guerrilla .rec-card-btn:hover{opacity:.8}
+.rc-guerrilla .rec-card-impact-fill{background:var(--guerrilla)}
+
+/* ── CALENDAR V2 ── */
+.cv-toolbar{display:flex;align-items:center;justify-content:space-between;padding:0 0 14px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.cv-nav{display:flex;align-items:center;gap:8px}
+.cv-nav-btn{background:transparent;border:1px solid var(--border);color:var(--t2);width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .15s;font-family:'DM Sans',sans-serif}
+.cv-nav-btn:hover{border-color:var(--t1);color:var(--t1)}
+.cv-today-btn{background:transparent;border:1px solid var(--border);color:var(--t1);padding:4px 11px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s}
+.cv-today-btn:hover{background:var(--bg2)}
+.cv-period{font-size:15px;font-weight:600;letter-spacing:.02em;color:var(--t1)}
+.cv-controls{display:flex;align-items:center;gap:8px}
+.cv-filter-btn{background:transparent;border:1px solid var(--border);color:var(--t2);padding:5px 11px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.cv-filter-btn:hover{border-color:var(--t2);color:var(--t1)}
+.cv-view-tog{display:flex;background:var(--border);gap:1px}
+.cv-view-btn{background:var(--bg1);border:none;color:var(--t3);padding:5px 11px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.cv-view-btn.active{background:var(--t1);color:var(--bg)}
+.cv-newpost-btn{background:var(--green);color:var(--bg);border:none;padding:6px 14px;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.cv-newpost-btn:hover{opacity:.85}
+.cv-filterbar{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.cv-fsel{background:var(--bg1);border:1px solid var(--border);color:var(--t2);padding:5px 10px;font-size:10px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;letter-spacing:.04em}
+.cv-fsel:focus{border-color:var(--t2)}
+.cv-clear{background:transparent;border:none;color:var(--blue);font-size:10px;letter-spacing:.05em;font-family:'DM Sans',sans-serif;cursor:pointer;margin-left:auto}
+.cv-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--border);gap:1px}
+.cv-dh{background:var(--bg1);padding:10px 10px 8px;display:flex;align-items:center;justify-content:space-between;min-height:44px}
+.cv-dh.tcol{border-top:2px solid var(--green);background:#070f00}
+.cv-day-info{display:flex;align-items:baseline;gap:5px}
+.cv-dname{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);font-weight:500}
+.cv-dnum{font-size:15px;font-weight:700;color:var(--t2)}
+.cv-dnum.tnum{background:var(--green);color:var(--bg);width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.cv-dplus{font-size:15px;color:var(--t3);cursor:pointer;opacity:0;transition:opacity .15s}
+.cv-dh:hover .cv-dplus{opacity:1}
+.cv-spans{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:5px 2px;background:var(--bg)}
+.cv-span{height:20px;display:flex;align-items:center;padding:0 8px;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;overflow:hidden;white-space:nowrap}
+.cv-span-g{background:rgba(158,255,0,.13);color:var(--green);border-left:2px solid var(--green)}
+.cv-span-a{background:rgba(255,149,0,.12);color:var(--amber);border-left:2px solid var(--amber)}
+.cv-span-p{background:rgba(167,139,250,.12);color:var(--purple);border-left:2px solid var(--purple)}
+.cv-span-emp{background:transparent}
+.cv-day{background:var(--bg);padding:6px;min-height:270px;display:flex;flex-direction:column;gap:5px}
+.cv-day.tcol{background:#030501}
+.cv-card{background:var(--bg2);border:1px solid var(--border);padding:8px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:border-color .15s;flex-shrink:0}
+.cv-card:hover{border-color:var(--t3)}
+.cv-card-hdr{display:flex;align-items:center;justify-content:space-between}
+.cv-card-meta{display:flex;align-items:center;gap:5px}
+.cv-pico{width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:800;flex-shrink:0;letter-spacing:0}
+.pi-ig{background:#e4405f;color:#fff}
+.pi-li{background:#0077b5;color:#fff}
+.pi-meta{background:#0668e1;color:#fff}
+.pi-diana{background:var(--purple);color:#fff}
+.pi-all{background:linear-gradient(135deg,#e4405f,#0077b5);color:#fff}
+.pi-brief{background:var(--bg3);color:var(--t2);border:1px solid var(--border)}
+.cv-time{font-size:8px;color:var(--t3);letter-spacing:.04em}
+.cv-status-dot{width:6px;height:6px;flex-shrink:0}
+.sd-sched{background:var(--blue)}
+.sd-pend{background:var(--amber)}
+.sd-del{background:var(--green)}
+.sd-rev{background:var(--purple)}
+.sd-brief{background:var(--t3)}
+.cv-card-title{font-size:10px;color:var(--t1);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cv-card-row{display:flex;align-items:center;gap:6px}
+.cv-thumb{width:30px;height:30px;background:var(--bg3);flex-shrink:0;border:1px solid var(--border)}
+.cv-chip{font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:2px 5px;font-weight:700}
+.chip-reels{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid var(--purple)}
+.chip-social{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid var(--blue)}
+.chip-pdp{background:rgba(255,149,0,.12);color:var(--amber);border:1px solid var(--amber)}
+.chip-delivery{background:rgba(158,255,0,.15);color:var(--green);border:1px solid var(--green)}
+.chip-report{background:var(--bg3);color:var(--t2);border:1px solid var(--border)}
+.chip-brief{background:var(--bg3);color:var(--t3);border:1px solid var(--border)}
+.cv-card-acts{display:flex;align-items:center;gap:8px;margin-top:2px}
+.cv-act-ico{font-size:9px;color:var(--t3);cursor:pointer;transition:color .15s;user-select:none}
+.cv-act-ico:hover{color:var(--t1)}
+.cv-milestone{border:1px solid var(--green);background:rgba(158,255,0,.07);padding:8px;display:flex;flex-direction:column;gap:3px;cursor:pointer;flex-shrink:0}
+.cv-ms-label{font-size:7px;letter-spacing:.15em;text-transform:uppercase;color:var(--green);font-weight:700}
+.cv-ms-title{font-size:10px;color:var(--t1);font-weight:600;line-height:1.3}
+.cv-ms-sub{font-size:8px;color:var(--t2)}
+
+/* ── CALENDAR SUB-SIDEBAR ── */
+#screen-calendar.active{padding:0!important;overflow:hidden!important;display:flex;flex-direction:column}
+.cv-layout{display:flex;flex:1;min-height:0;height:100%;min-height:580px}
+.cv-sub-sidebar{width:200px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg1);display:flex;flex-direction:column;overflow-y:auto}
+.cv-main{flex:1;min-width:0;padding:20px 24px;overflow-y:auto}
+.cv-ss-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 10px;border-bottom:1px solid var(--border)}
+.cv-ss-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t1)}
+.cv-ss-collapse{font-size:13px;color:var(--t3);cursor:pointer;transition:color .15s}
+.cv-ss-collapse:hover{color:var(--t1)}
+.cv-ss-np-wrap{padding:12px 12px 6px}
+.cv-ss-newpost{background:var(--green);color:var(--bg);border:none;width:100%;padding:9px 0;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;justify-content:center;gap:7px}
+.cv-ss-newpost:hover{opacity:.85}
+.cv-ss-np-ico{font-size:10px}
+.cv-ss-sec{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);padding:12px 14px 4px;display:flex;align-items:center;justify-content:space-between}
+.cv-ss-sec-add{font-size:13px;color:var(--t3);cursor:pointer;transition:color .15s;line-height:1}
+.cv-ss-sec-add:hover{color:var(--t1)}
+.cv-ss-item{font-size:11px;color:var(--t2);padding:6px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;white-space:nowrap}
+.cv-ss-item:hover{background:var(--bg2);color:var(--t1)}
+.cv-ss-item.active{background:var(--bg3);color:var(--t1);font-weight:600}
+.cv-ss-badge{font-size:8px;font-weight:700;padding:1px 6px;background:rgba(255,149,0,.15);color:var(--amber)}
+.cv-ss-camp-item{font-size:11px;color:var(--t2);padding:5px 14px 5px 22px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
+.cv-ss-camp-item:hover{background:var(--bg2);color:var(--t1)}
+.cv-ss-camp-item.parent{padding-left:14px;font-weight:600}
+.cv-ss-camp-dot{width:6px;height:6px;flex-shrink:0}
+.cv-ss-item-dim{opacity:.4;cursor:default}
+.cv-ss-divider{height:1px;background:var(--border);margin:8px 0}
+/* Best Times card */
+.cv-ss-times{margin:auto 12px 14px;border:1px solid var(--border);background:var(--bg2);padding:12px}
+.cv-ss-times-hdr{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--t1);margin-bottom:2px}
+.cv-ss-times-sub{font-size:8px;color:var(--t3);letter-spacing:.03em;margin-bottom:10px}
+.cv-ss-row{display:flex;align-items:center;justify-content:space-between;padding:4px 5px;margin-bottom:2px}
+.cv-ss-row.best{background:rgba(158,255,0,.1);border-left:2px solid var(--green)}
+.cv-ss-day{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);width:24px;flex-shrink:0}
+.cv-ss-row.best .cv-ss-day{color:var(--green);font-weight:700}
+.cv-ss-stars{font-size:9px;color:var(--t3);letter-spacing:-1px}
+.cv-ss-row.best .cv-ss-stars{color:var(--green)}
+.cv-ss-times-note{font-size:7px;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
+
+/* ── PERFORMANCE V2 ── */
+#screen-performance.active{padding:0!important;overflow:hidden!important;display:flex;flex-direction:column}
+.pr-layout{display:flex;flex:1;min-height:0;height:100%;min-height:680px}
+/* Sub-sidebar */
+.pr-sidebar{width:200px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg1);display:flex;flex-direction:column;overflow-y:auto}
+.pr-sb-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 10px;border-bottom:1px solid var(--border)}
+.pr-sb-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t1)}
+.pr-sb-ico{font-size:12px;color:var(--t3);cursor:pointer}
+.pr-sb-export{background:var(--green);color:var(--bg);border:none;width:calc(100% - 24px);margin:12px;padding:8px 0;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.pr-sb-export:hover{opacity:.85}
+.pr-sb-sec{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);padding:12px 14px 4px;display:flex;align-items:center;justify-content:space-between}
+.pr-sb-sec-add{color:var(--t3);cursor:pointer;font-size:13px;line-height:1;transition:color .15s}
+.pr-sb-sec-add:hover{color:var(--t1)}
+.pr-sb-item{font-size:11px;color:var(--t2);padding:6px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pr-sb-item:hover{background:var(--bg2);color:var(--t1)}
+.pr-sb-item.active{background:var(--bg3);color:var(--t1);font-weight:600}
+.pr-sb-item.active-sub{color:var(--t1);font-weight:500;padding-left:20px}
+.pr-sb-item.sub{padding-left:20px;font-size:10.5px}
+.pr-sb-item.dim{opacity:.38;cursor:default}
+.pr-sb-item.dim:hover{background:transparent;color:var(--t2)}
+.pr-sb-dot{width:7px;height:7px;flex-shrink:0}
+.pr-sb-divider{height:1px;background:var(--border);margin:8px 0}
+.pr-sb-footer{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:color .15s}
+.pr-sb-footer:hover{color:var(--t1)}
+/* Main */
+.pr-main{flex:1;min-width:0;padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+/* Header */
+.pr-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.pr-hdr-title{font-size:20px;font-weight:600;letter-spacing:.01em;color:var(--t1);display:flex;align-items:center;gap:8px}
+.pr-hdr-star{font-size:14px;color:var(--t3);cursor:pointer}
+.pr-hdr-sub{font-size:10px;color:var(--t3);letter-spacing:.04em;margin-top:3px;display:flex;align-items:center;gap:8px}
+.pr-live-dot{width:6px;height:6px;background:var(--green);display:inline-block;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.pr-hdr-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pr-date-btn{background:var(--bg2);border:1px solid var(--border);color:var(--t1);padding:7px 12px;font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.03em;display:flex;align-items:center;gap:6px;transition:border-color .15s;white-space:nowrap}
+.pr-date-btn:hover{border-color:var(--t2)}
+.pr-add-btn{background:transparent;border:1px solid var(--border);color:var(--t2);padding:7px 12px;font-size:9px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-weight:600;transition:all .15s}
+.pr-add-btn:hover{border-color:var(--t1);color:var(--t1)}
+/* Filter bar */
+.pr-filterbar{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pr-filter{background:transparent;border:1px solid var(--border);color:var(--t2);padding:5px 10px;font-size:9px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-weight:600;transition:all .15s;display:flex;align-items:center;gap:5px}
+.pr-filter:hover{border-color:var(--t2);color:var(--t1)}
+.pr-filter.active{border-color:var(--t1);color:var(--t1)}
+.pr-filter-sep{color:var(--t3);font-size:9px;margin-left:auto}
+/* Cards */
+.pr-card{background:var(--bg1);border:1px solid var(--border);padding:20px}
+.pr-card-hdr{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:3px}
+.pr-card-sub{font-size:10px;color:var(--t3);letter-spacing:.03em;margin-bottom:14px}
+.pr-card-filters{display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.pr-cf{background:transparent;border:1px solid var(--border);color:var(--t2);padding:4px 8px;font-size:8px;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.pr-cf:hover{border-color:var(--t2)}
+/* KPI row */
+.pr-kpis{display:grid;grid-template-columns:repeat(4,1fr);background:var(--border);gap:1px;margin-bottom:20px}
+.pr-kpi{background:var(--bg);padding:18px 20px}
+.pr-kpi-lbl{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.pr-kpi-val{font-size:26px;font-weight:700;color:var(--t1);line-height:1;margin-bottom:5px}
+.pr-kpi-trend{font-size:10px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:4px}
+.pr-trend-up{color:var(--green)}
+.pr-trend-down{color:var(--amber)}
+.pr-trend-sub{font-size:9px;color:var(--t3);font-weight:400;margin-left:4px}
+/* Chart */
+.pr-chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pr-chart-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t2)}
+.pr-chart-legend{display:flex;gap:14px}
+.pr-leg-item{font-size:9px;color:var(--t3);display:flex;align-items:center;gap:5px;letter-spacing:.05em}
+.pr-leg-line{width:18px;height:2px}
+.pr-chart-wrap{width:100%;overflow:hidden;margin-bottom:4px}
+/* Post cards row */
+.pr-posts{display:grid;grid-template-columns:repeat(4,1fr);background:var(--border);gap:1px;margin-top:4px}
+.pr-post-card{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;cursor:pointer;transition:background .15s}
+.pr-post-card:hover{background:var(--bg2)}
+.pr-post-top{height:3px}
+.pr-post-meta{display:flex;align-items:center;gap:7px;padding:10px 12px 6px}
+.pr-post-pico{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;flex-shrink:0}
+.pr-post-handle{font-size:9px;color:var(--t3);letter-spacing:.03em;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pr-post-ts{font-size:8px;color:var(--t3);letter-spacing:.03em;padding:0 12px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-post-body{font-size:10px;color:var(--t1);line-height:1.5;padding:0 12px 8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.pr-post-thumb{height:80px;margin:0 12px 10px;background:var(--bg2);border:1px solid var(--border)}
+.pr-post-foot{padding:8px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pr-post-metric{font-size:9px;color:var(--t1);font-weight:600}
+.pr-post-metric-lbl{font-size:8px;color:var(--t3);margin-bottom:1px}
+.pr-post-badge{font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;font-weight:700}
+.prb-del{background:rgba(158,255,0,.12);color:var(--green);border:1px solid var(--green)}
+.prb-live{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid var(--blue)}
+.prb-boost{background:rgba(255,149,0,.12);color:var(--amber);border:1px solid var(--amber)}
+.pr-post-acts{display:flex;gap:8px}
+.pr-post-act{font-size:9px;color:var(--t3);cursor:pointer;transition:color .15s}
+.pr-post-act:hover{color:var(--t1)}
+/* AI Recommendations */
+.pr-ai-hdr{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.pr-ai-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+.pr-recs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--border);gap:1px;margin-top:14px}
+.pr-rec{background:var(--bg);padding:16px}
+.pr-rec-type{font-size:7px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.pr-rec-icon{width:6px;height:6px}
+.pr-rec-h{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:7px;line-height:1.4}
+.pr-rec-txt{font-size:10px;color:var(--t2);line-height:1.6;margin-bottom:12px}
+.pr-rec-btn{border:none;padding:5px 12px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.pr-rec-btn:hover{opacity:.8}
+.pr-rec-btn-g{background:var(--green);color:var(--bg)}
+.pr-rec-btn-a{background:rgba(255,149,0,.15);color:var(--amber);border:1px solid var(--amber)}
+.pr-rec-btn-b{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid var(--blue)}
+
+/* ── MOBILE HAMBURGER (hidden on desktop) ── */
+.mob-hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;flex-shrink:0;padding:6px 4px;margin-right:8px}
+.mob-hamburger span{display:block;width:18px;height:1.5px;background:var(--t2);transition:background .15s}
+.mob-hamburger:hover span{background:var(--t1)}
+.mob-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:98;backdrop-filter:blur(2px)}
+.mob-backdrop.show{display:block}
+
+/* ── TABLET (≤900px) ── */
+@media(max-width:900px){
+  html,body{overflow:auto}
+  .app{flex-direction:column;position:relative}
+  .mob-hamburger{display:flex}
+
+  /* Sidebar: fixed slide-in overlay */
+  .sidebar{position:fixed;left:-240px;top:0;height:100vh;z-index:99;transition:left .25s ease;overflow-y:auto;width:220px}
+  .sidebar.mob-open{left:0}
+
+  /* Main fills full width */
+  .main{width:100%;height:auto;min-height:100vh;overflow:visible}
+  .content{overflow-y:visible;height:auto;padding:18px 16px}
+
+  /* Topbar */
+  .topbar{padding:0 14px;gap:8px}
+  .tb-sep,.tb-sub,.tb-date{display:none}
+  .tb-title{font-size:11px}
+  .btn-p{padding:6px 12px;font-size:10px}
+
+  /* Hub stat grid: 2-col */
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+
+  /* Recommendation cards: 1-col */
+  .rec-cards{grid-template-columns:1fr}
+
+  /* Task cards: 2-col */
+  .task-cards{grid-template-columns:repeat(2,1fr)}
+
+  /* Brief steps: scroll */
+  .brief-steps{grid-template-columns:repeat(5,minmax(90px,1fr));overflow-x:auto}
+  .form-grid{grid-template-columns:repeat(2,1fr)}
+  .dir-cards{grid-template-columns:repeat(2,1fr)}
+
+  /* Asset grid: 2-col */
+  .asset-grid{grid-template-columns:repeat(2,1fr)}
+  .ch-tabs{overflow-x:auto;flex-wrap:nowrap}
+
+  /* Calendar layout: sidebar stacks above */
+  #screen-calendar.active{overflow:auto!important}
+  .cv-layout{flex-direction:column;min-height:auto}
+  .cv-sub-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);overflow:hidden;max-height:44px;transition:max-height .25s ease;flex-direction:row;flex-shrink:0}
+  .cv-layout.mob-cal-open .cv-sub-sidebar{max-height:700px}
+  .cv-main{padding:14px}
+  .cv-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+  /* Performance layout: sidebar stacks above */
+  #screen-performance.active{overflow:auto!important}
+  .pr-layout{flex-direction:column;min-height:auto}
+  .pr-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);overflow:hidden;max-height:44px;transition:max-height .25s ease;flex-shrink:0}
+  .pr-layout.mob-pr-open .pr-sidebar{max-height:900px}
+  .pr-main{padding:14px}
+  .pr-kpis{grid-template-columns:repeat(2,1fr)}
+  .pr-posts{grid-template-columns:repeat(2,1fr)}
+  .pr-recs{grid-template-columns:1fr}
+
+  /* Diana: hide right panel */
+  .diana-wrap{flex-direction:column}
+  .diana-right{display:none}
+  .diana-main{border-right:none}
+
+  /* Library */
+  .lib-grid{grid-template-columns:repeat(2,1fr)}
+  .lib-toolbar{flex-wrap:wrap}
+  .lib-cats{overflow-x:auto;flex-wrap:nowrap}
+
+  /* Integrations */
+  .int-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Projects steps overflow */
+  .proj-steps{overflow-x:auto;padding-bottom:4px}
+
+  /* PR hdr */
+  .pr-hdr{flex-wrap:wrap;gap:8px}
+  .pr-hdr-actions{flex-wrap:wrap}
+  .pr-filterbar{flex-wrap:wrap}
+  .cv-toolbar{flex-wrap:wrap;gap:8px}
+  .cv-controls{flex-wrap:wrap;gap:6px}
+}
+
+/* ── PHONE (≤500px) ── */
+@media(max-width:500px){
+  .content{padding:12px}
+  .stat-grid{grid-template-columns:1fr}
+  .task-cards{grid-template-columns:1fr}
+  .dir-cards{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .asset-grid{grid-template-columns:repeat(2,1fr)}
+  .lib-grid{grid-template-columns:repeat(2,1fr)}
+  .int-grid{grid-template-columns:1fr}
+  .pr-kpis{grid-template-columns:1fr}
+  .pr-posts{grid-template-columns:1fr}
+  .cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat-num{font-size:24px}
+  .pr-kpi-val{font-size:20px}
+  .topbar{height:50px}
+  .tb-title{font-size:10px}
+  .btn-p{padding:5px 10px;font-size:9px}
+  .pr-hdr-title{font-size:16px}
+  .cv-period{font-size:13px}
+  .cv-dnum{font-size:12px}
+  .cv-dh{padding:6px 4px}
+  .cv-day{min-height:140px}
+}
+</style>
+</head>
+<body>
+<div class="mob-backdrop" id="mob-backdrop" onclick="closeSidebar()"></div>
+<div class="app">
+<aside class="sidebar" id="main-sidebar">
+  <div class="s-logo">ZESTLY<span>STUDIO</span></div>
+  <nav class="s-nav">
+    <div class="s-sec">Diana</div>
+    <div class="nav-item" onclick="go('diana',this,'full')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+      Diana AI<span class="nav-badge-p">3</span>
+    </div>
+    <div class="s-sec">Workspace</div>
+    <div class="nav-item active" onclick="go('hub',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/><rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/></svg>
+      Hub
+    </div>
+    <div class="nav-item" onclick="go('brief',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="2"/><rect x="2" y="6" width="8" height="2"/><rect x="2" y="10" width="10" height="2"/><rect x="2" y="14" width="6" height="2"/></svg>
+      Brief Studio<span class="nav-badge">1</span>
+    </div>
+    <div class="nav-item" onclick="go('projects',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="14" height="3"/><rect x="1" y="6" width="10" height="3"/><rect x="1" y="11" width="12" height="3"/></svg>
+      Projects<span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="go('assets',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="8"/><rect x="9" y="1" width="6" height="5"/><rect x="9" y="8" width="6" height="7"/><rect x="1" y="11" width="6" height="4"/></svg>
+      Asset Review
+    </div>
+    <div class="nav-item" onclick="go('calendar',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="12"/><path d="M1 7h14M5 1v4M11 1v4"/></svg>
+      Calendar
+    </div>
+    <div class="nav-item" onclick="go('performance',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="9" width="3" height="6"/><rect x="6" y="5" width="3" height="10"/><rect x="11" y="1" width="3" height="14"/></svg>
+      Performance
+    </div>
+    <div class="nav-item" onclick="go('library',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/><rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/></svg>
+      Library
+    </div>
+    <div class="nav-item" onclick="go('integrations',this,'scroll')">
+      <svg class="nav-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="3" cy="8" r="2"/><circle cx="13" cy="3" r="2"/><circle cx="13" cy="13" r="2"/><path d="M5 8h3l2-3M8 8l2 3"/></svg>
+      Integrations
+    </div>
+  </nav>
+  <div class="s-profile">
+    <div class="s-profile-ava">AP</div>
+    <div class="s-profile-info">
+      <div class="s-profile-name">Anurag Poddar</div>
+      <div class="s-profile-email">anurag.poddar@siyaram.com</div>
+    </div>
+    <div class="s-profile-arr">▾</div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="mob-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="tb-title" id="tb-t">Brand Intelligence Hub</div>
+    <div class="tb-sep"></div>
+    <div class="tb-sub" id="tb-s">Overview — Siyaram's India</div>
+    <div class="tb-right">
+      <div class="tb-date">April 2026</div>
+      <button class="btn-p" id="tb-btn">+ New Brief</button>
+    </div>
+  </div>
+
+  <div id="full-screens" style="flex:1;overflow:hidden;display:none">
+    <!-- DIANA -->
+    <div class="screen-full" id="screen-diana">
+      <div class="diana-wrap">
+        <div class="diana-main">
+          <div class="diana-hdr">
+            <div class="diana-avatar">D</div>
+            <div>
+              <div class="diana-name">Diana</div>
+              <div class="diana-status">Online · Creative Intelligence Active</div>
+            </div>
+            <div class="diana-status-badge">AI Agent</div>
+          </div>
+          <div class="diana-msgs" id="diana-msgs">
+            <div class="msg msg-d">
+              <div class="msg-ava">D</div>
+              <div class="msg-body">
+                <div class="msg-sender">Diana · 9:02 AM</div>
+                <div class="msg-bubble">Good morning. You have 3 items that need attention today — the Summer Linen asset review is at 53%, the Wedding Season moodboard is pending, and performance on the Ramadan direction is up 22% week-over-week. Where do you want to start?</div>
+                <div class="msg-action-row">
+                  <button class="msg-action primary" onclick="go('assets',document.querySelectorAll('.nav-item')[4],'scroll')">Review Assets</button>
+                  <button class="msg-action primary" onclick="go('projects',document.querySelectorAll('.nav-item')[3],'scroll')">See Projects</button>
+                  <button class="msg-action" onclick="go('performance',document.querySelectorAll('.nav-item')[6],'scroll')">See Performance</button>
+                </div>
+              </div>
+            </div>
+            <div class="msg msg-u">
+              <div class="msg-ava">S</div>
+              <div class="msg-body">
+                <div class="msg-sender">You · 9:14 AM</div>
+                <div class="msg-bubble">Can you put together a brief for the Eid collection? 60 assets — Instagram, Myntra, and Meta ads. Festive direction, warm tones. Deadline May 2.</div>
+              </div>
+            </div>
+            <div class="msg msg-d">
+              <div class="msg-ava">D</div>
+              <div class="msg-body">
+                <div class="msg-sender">Diana · 9:14 AM</div>
+                <div class="msg-bubble">Got it. Based on past Eid and Ramadan performance, I'd recommend Heritage Warmth — it outperformed your other directions by 2.3× on engagement for festive SKUs. I've pre-filled a brief with your specs. The Creative Director will have 3 moodboards ready within 24 hours for your approval before any production starts.<br><br>Breakdown: 24 Instagram 4:5 · 20 Myntra White BG · 16 Meta 1:1. Deadline confirmed May 2.</div>
+                <div class="msg-action-row">
+                  <button class="msg-action primary" onclick="go('brief',document.querySelectorAll('.nav-item')[2],'scroll')">Review Brief →</button>
+                  <button class="msg-action">Edit Scope</button>
+                  <button class="msg-action">Change Direction</button>
+                </div>
+              </div>
+            </div>
+            <div class="msg msg-u">
+              <div class="msg-ava">S</div>
+              <div class="msg-body">
+                <div class="msg-sender">You · 9:22 AM</div>
+                <div class="msg-bubble">What's our best performing SKU category on Myntra right now?</div>
+              </div>
+            </div>
+            <div class="msg msg-d">
+              <div class="msg-ava">D</div>
+              <div class="msg-body">
+                <div class="msg-sender">Diana · 9:22 AM</div>
+                <div class="msg-bubble">Linen Kurtas — 3.1% CTR on Myntra, up 18% from last month. White background shots with a single model convert 22% better than styled group shots for this category. Recommend we prioritise solo model white-bg assets in the Eid batch.</div>
+              </div>
+            </div>
+            <div id="typing-indicator" class="msg msg-d" style="display:none">
+              <div class="msg-ava">D</div>
+              <div class="msg-body">
+                <div class="msg-sender">Diana · now</div>
+                <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INPUT AREA WITH VOICE + UPLOAD -->
+          <div class="diana-input-area">
+            <div id="attach-preview" class="attach-preview">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--t2)" stroke-width="1.5"><path d="M13 9.5V13a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h3.5"/><path d="M10 2h4v4"/><path d="M6 10l8-8"/></svg>
+              <span class="attach-name" id="attach-name">product-brief.pdf</span>
+              <button class="attach-remove" onclick="removeAttach()">×</button>
+            </div>
+            <div class="diana-input-toolbar">
+              <span class="di-tool-label">Attach</span>
+              <button class="di-tool-btn" title="Upload media / file" onclick="triggerUpload()" id="upload-btn">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10v3a1 1 0 001 1h10a1 1 0 001-1v-3"/><path d="M8 10V3"/><path d="M5 6l3-3 3 3"/></svg>
+              </button>
+              <button class="di-tool-btn" title="Upload image / video" onclick="triggerUpload()" >
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><circle cx="5.5" cy="7" r="1.5"/><path d="M1 12l4-4 3 3 2-2 4 4"/></svg>
+              </button>
+              <div class="di-tool-sep"></div>
+              <span class="di-tool-label">Voice</span>
+              <button class="di-tool-btn" title="Voice message" id="voice-btn" onclick="toggleVoice()">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="1" width="6" height="9" rx="3"/><path d="M2 8a6 6 0 0012 0"/><path d="M8 14v2"/><path d="M5 16h6"/></svg>
+              </button>
+              <div id="voice-status" style="display:none;align-items:center;gap:6px">
+                <div style="display:flex;gap:2px;align-items:flex-end;height:16px">
+                  <div style="width:3px;background:var(--red);animation:wave 0.6s infinite alternate" class="wave-bar"></div>
+                  <div style="width:3px;background:var(--red);animation:wave 0.6s 0.1s infinite alternate" class="wave-bar"></div>
+                  <div style="width:3px;background:var(--red);animation:wave 0.6s 0.2s infinite alternate" class="wave-bar"></div>
+                  <div style="width:3px;background:var(--red);animation:wave 0.6s 0.3s infinite alternate" class="wave-bar"></div>
+                  <div style="width:3px;background:var(--red);animation:wave 0.6s 0.4s infinite alternate" class="wave-bar"></div>
+                </div>
+                <span style="font-size:10px;color:var(--red);letter-spacing:.1em;text-transform:uppercase">Recording…</span>
+                <button onclick="toggleVoice()" style="font-size:10px;background:var(--red);color:#fff;border:none;padding:2px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase">Stop</button>
+              </div>
+            </div>
+            <div class="diana-input-row">
+              <textarea class="diana-input" id="diana-inp" rows="1" placeholder="Ask Diana anything — brief a campaign, check performance, request assets..."></textarea>
+              <button class="diana-send" onclick="sendMsg()">Send</button>
+            </div>
+          </div>
+          <input type="file" id="file-input" style="display:none" onchange="handleFile(this)">
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="diana-right">
+          <div class="dr-section">
+            <div class="dr-sec-hdr" onclick="toggle(this)">
+              <span class="dr-sec-title">Chat History</span>
+              <span style="display:flex;align-items:center;gap:8px"><span class="dr-sec-count">12 sessions</span><span class="dr-sec-toggle open">▾</span></span>
+            </div>
+            <div class="dr-body">
+              <div class="dr-item"><div class="dr-ava" style="font-size:7px">D</div><div style="flex:1;min-width:0"><div class="dr-item-name">Wedding Season Kurtas brief</div><div class="dr-item-sub">Apr 8 · 14 messages</div></div></div>
+              <div class="dr-item" style="background:var(--bg1)"><div class="dr-ava" style="font-size:7px">D</div><div style="flex:1;min-width:0"><div class="dr-item-name" style="color:var(--t1)">Eid Collection planning</div><div class="dr-item-sub">Today · Active</div></div><div class="dr-dot dr-dot-g"></div></div>
+              <div class="dr-item"><div class="dr-ava" style="font-size:7px">D</div><div style="flex:1;min-width:0"><div class="dr-item-name">Summer Linen direction</div><div class="dr-item-sub">Apr 6 · 8 messages</div></div></div>
+              <div class="dr-item"><div class="dr-ava" style="font-size:7px">D</div><div style="flex:1;min-width:0"><div class="dr-item-name">Myntra catalogue Q2 batch</div><div class="dr-item-sub">Apr 3 · 22 messages</div></div></div>
+              <div class="dr-item"><div class="dr-ava" style="font-size:7px">D</div><div style="flex:1;min-width:0"><div class="dr-item-name">March performance review</div><div class="dr-item-sub">Mar 31 · 6 messages</div></div></div>
+            </div>
+          </div>
+          <div class="dr-section">
+            <div class="dr-sec-hdr" onclick="toggle(this)">
+              <span class="dr-sec-title">Direct Messages</span>
+              <span style="display:flex;align-items:center;gap:8px"><span class="dr-sec-count">3 unread</span><span class="dr-sec-toggle open">▾</span></span>
+            </div>
+            <div class="dr-body">
+              <div class="dr-item"><div class="dr-ava" style="background:var(--bg3)">RK</div><div style="flex:1;min-width:0"><div class="dr-item-name">Rohan K. <span style="color:var(--t3);font-weight:400;font-size:10px">Creative Dir.</span></div><div class="dr-item-sub">Moodboards ready for review</div></div><div class="dr-unread">2</div></div>
+              <div class="dr-item"><div class="dr-ava" style="background:var(--bg3)">AS</div><div style="flex:1;min-width:0"><div class="dr-item-name">Anika S. <span style="color:var(--t3);font-weight:400;font-size:10px">Cont. Eng.</span></div><div class="dr-item-sub">Linen batch QC done</div></div><div class="dr-unread">1</div></div>
+              <div class="dr-item"><div class="dr-ava" style="background:var(--bg3)">MT</div><div style="flex:1;min-width:0"><div class="dr-item-name">Meera T. <span style="color:var(--t3);font-weight:400;font-size:10px">Account</span></div><div class="dr-item-sub">Invoice Q1 sent</div></div><div class="dr-dot dr-dot-gr"></div></div>
+              <div class="dr-item"><div class="dr-ava" style="background:var(--bg3)">VP</div><div style="flex:1;min-width:0"><div class="dr-item-name">Vikram P. <span style="color:var(--t3);font-weight:400;font-size:10px">Strategy</span></div><div class="dr-item-sub">Brief feedback added</div></div><div class="dr-dot dr-dot-y"></div></div>
+            </div>
+          </div>
+          <div class="dr-section">
+            <div class="dr-sec-hdr" onclick="toggle(this)">
+              <span class="dr-sec-title">Channels</span>
+              <span style="display:flex;align-items:center;gap:8px"><span class="dr-sec-count">5 channels</span><span class="dr-sec-toggle open">▾</span></span>
+            </div>
+            <div class="dr-body">
+              <div class="dr-item"><div class="dr-ch-hash">#</div><div style="flex:1;min-width:0"><div class="dr-item-name">campaign-summer-linen</div><div class="dr-item-sub">3 new updates from Diana</div></div><div class="dr-unread">3</div></div>
+              <div class="dr-item"><div class="dr-ch-hash">#</div><div style="flex:1;min-width:0"><div class="dr-item-name">asset-approvals</div><div class="dr-item-sub">Last: 2h ago</div></div><div class="dr-dot dr-dot-g"></div></div>
+              <div class="dr-item"><div class="dr-ch-hash">#</div><div style="flex:1;min-width:0"><div class="dr-item-name">performance-updates</div><div class="dr-item-sub">Weekly digest posted</div></div><div class="dr-dot dr-dot-gr"></div></div>
+              <div class="dr-item"><div class="dr-ch-hash">#</div><div style="flex:1;min-width:0"><div class="dr-item-name">eid-collection</div><div class="dr-item-sub">Just created by Diana</div></div><div class="dr-dot dr-dot-g"></div></div>
+              <div class="dr-item"><div class="dr-ch-hash">#</div><div style="flex:1;min-width:0"><div class="dr-item-name">myntra-catalogue</div><div class="dr-item-sub">Last: Apr 3</div></div><div class="dr-dot dr-dot-gr"></div></div>
+            </div>
+          </div>
+          <div class="dr-section">
+            <div class="dr-sec-hdr" onclick="toggle(this)">
+              <span class="dr-sec-title">Brand Knowledge Base</span>
+              <span style="display:flex;align-items:center;gap:8px"><span class="dr-sec-count">18 docs</span><span class="dr-sec-toggle open">▾</span></span>
+            </div>
+            <div class="dr-body">
+              <input class="dr-search" placeholder="Search knowledge base...">
+              <div class="dr-item"><div class="dr-kb-icon">BI</div><div style="flex:1;min-width:0"><div class="dr-item-name">Brand Identity Guidelines</div><div class="dr-item-sub">Colors, fonts, tone — v3.2</div></div></div>
+              <div class="dr-item"><div class="dr-kb-icon">AU</div><div style="flex:1;min-width:0"><div class="dr-item-name">Audience Profile</div><div class="dr-item-sub">Demographics · Personas</div></div></div>
+              <div class="dr-item"><div class="dr-kb-icon">MS</div><div style="flex:1;min-width:0"><div class="dr-item-name">Myntra Style Guide</div><div class="dr-item-sub">Image specs · BG requirements</div></div></div>
+              <div class="dr-item"><div class="dr-kb-icon">FC</div><div style="flex:1;min-width:0"><div class="dr-item-name">Festive Calendar 2026</div><div class="dr-item-sub">Eid · Diwali · Wedding Season</div></div></div>
+              <div class="dr-item"><div class="dr-kb-icon">PH</div><div style="flex:1;min-width:0"><div class="dr-item-name">Performance History</div><div class="dr-item-sub">Q1 2026 direction data</div></div></div>
+            </div>
+          </div>
+          <div class="dr-section" style="border-bottom:none">
+            <div class="dr-sec-hdr" onclick="toggle(this)">
+              <span class="dr-sec-title">Pinned Metrics</span>
+              <span style="display:flex;align-items:center;gap:8px"><span class="dr-sec-count">4 pinned</span><span class="dr-sec-toggle open">▾</span></span>
+            </div>
+            <div class="dr-body">
+              <div class="dr-metric"><div class="dr-m-lbl">Meta Ads CTR</div><div class="dr-m-val" style="color:var(--green)">4.8%</div><div class="dr-m-d up">+1.2pp vs last month</div></div>
+              <div class="dr-metric"><div class="dr-m-lbl">Assets This Month</div><div class="dr-m-val">142</div><div class="dr-m-d up">+38 from March</div></div>
+              <div class="dr-metric"><div class="dr-m-lbl">Avg. Turnaround</div><div class="dr-m-val">41h</div><div class="dr-m-d up">7h under SLA</div></div>
+              <div class="dr-metric"><div class="dr-m-lbl">Myntra Approval Rate</div><div class="dr-m-val">91%</div><div class="dr-m-d up">+4% this quarter</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" id="scroll-screens">
+
+    <!-- HUB -->
+    <div class="screen active" id="screen-hub">
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-lbl">Assets This Month</div><div class="stat-num">142</div><div class="stat-d up">+38 from last month</div></div>
+        <div class="stat-box"><div class="stat-lbl">Active Briefs</div><div class="stat-num">3</div><div class="stat-d">2 in production</div></div>
+        <div class="stat-box"><div class="stat-lbl">Avg. Turnaround</div><div class="stat-num">41h</div><div class="stat-d up">Below 48h SLA</div></div>
+        <div class="stat-box"><div class="stat-lbl">Approval Rate</div><div class="stat-num">87%</div><div class="stat-d up">+5% this quarter</div></div>
+      </div>
+
+      <!-- ── UPCOMING TASKS ── -->
+      <div class="task-section">
+        <div class="task-section-hdr">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="task-section-title">Upcoming Tasks</div>
+            <div style="font-size:9px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--amber);padding:1px 7px">3 today</div>
+          </div>
+          <div style="font-size:10px;color:var(--t3);letter-spacing:.05em">Apr 11 – Apr 16</div>
+        </div>
+        <div class="task-cards">
+
+          <!-- TASK 1: LinkedIn Post — Apr 11 (Today) -->
+          <div class="task-card tc-content tc-today">
+            <div class="task-card-type"><div class="task-card-dot"></div>Content</div>
+            <div class="task-card-title">LinkedIn Post</div>
+            <div class="task-card-sub">Founder podcast about why generation is commoditising and intelligence is the last moat in AI creative — podcast clips generated</div>
+            <div class="task-card-footer">
+              <div class="task-card-date">Today · Apr 11</div>
+              <button class="task-card-action">Review Draft</button>
+            </div>
+          </div>
+
+          <!-- TASK 2: Weekly Performance Report — Apr 11 (Today) -->
+          <div class="task-card tc-report tc-today">
+            <div class="task-card-type"><div class="task-card-dot"></div>Report</div>
+            <div class="task-card-title">Weekly Performance Report</div>
+            <div class="task-card-sub">Auto-generated by Diana — CTR, approval rate, turnaround, and campaign pipeline summary</div>
+            <div class="task-card-footer">
+              <div class="task-card-date">Today · Apr 11</div>
+              <button class="task-card-action">Preview</button>
+            </div>
+          </div>
+
+          <!-- TASK 3: Meta Rotation — Apr 11 (Today) -->
+          <div class="task-card tc-delivery tc-today">
+            <div class="task-card-type"><div class="task-card-dot"></div>Action Required</div>
+            <div class="task-card-title">Meta Creative Rotation</div>
+            <div class="task-card-sub">Heritage Warmth #3 at frequency 4.2 — new A/B variant approved, ready to swap in</div>
+            <div class="task-card-footer">
+              <div class="task-card-date">Today · Urgent</div>
+              <button class="task-card-action" style="border-color:var(--green);color:var(--green)">Swap Now</button>
+            </div>
+          </div>
+
+          <!-- TASK 4: Missing Brief Details — Apr 12 -->
+          <div class="task-card tc-report tc-tomorrow">
+            <div class="task-card-type"><div class="task-card-dot"></div>Action Required</div>
+            <div class="task-card-title">Missing Details in Brief</div>
+            <div class="task-card-sub">Wedding Season brief is incomplete — 3 required fields missing before Creative Director can begin moodboards</div>
+            <div class="task-card-footer">
+              <div class="task-card-date">Apr 12 · Tomorrow</div>
+              <button class="task-card-action">Complete Brief</button>
+            </div>
+          </div>
+
+          <!-- TASK 5: Instagram Dark Post — Apr 13 -->
+          <div class="task-card tc-delivery tc-upcoming">
+            <div class="task-card-type"><div class="task-card-dot"></div>Delivery</div>
+            <div class="task-card-title">Instagram Dark Post</div>
+            <div class="task-card-sub">Summer Linen batch — 18 Meta dark post variants ready for final QC before launch</div>
+            <div class="task-card-footer">
+              <div class="task-card-date">Apr 13 · Sun</div>
+              <button class="task-card-action">Review Assets</button>
+            </div>
+          </div>
+
+          <!-- TASK 6: Weekly Sync — Apr 14 -->
+          <div class="task-card tc-meeting tc-upcoming">
+            <div class="task-card-type"><div class="task-card-dot"></div>Meeting</div>
+            <div class="task-card-title">Weekly Sync — ZESTLY Team</div>
+            <div class="task-card-sub">Creative Director + Account lead · Eid brief review, Summer Linen handover, Q2 planning</div>
+            <div class="task-card-footer">
+              <div class="task-card-date">Apr 14 · 10:00 AM IST</div>
+              <button class="task-card-action">Join Call</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── RECOMMENDATIONS ── -->
+      <div class="rec-section">
+        <div class="rec-section-hdr">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="rec-section-title">Recommendations</div>
+            <div style="font-size:9px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--green);padding:1px 7px">6 new</div>
+          </div>
+        </div>
+        <div class="rec-cards">
+
+          <!-- 1. TREND ALERT — High impact + window narrowing NOW -->
+          <div class="rec-card rc-trend" id="rc-1">
+            <div class="rec-card-age">2h ago</div>
+            <div class="rec-card-type">⬤ Trend Alert</div>
+            <div class="rec-card-title">Muted earth tones are surging on Instagram India</div>
+            <div class="rec-card-body">Warm ochre, terracotta and sand palettes are up <strong>+34% engagement</strong> this week across Indian fashion brands among your clients. Your Heritage Warmth direction already aligns, deploy it for the Eid collection before the window narrows. <strong>3 competitors</strong> in this segment have adopted this palette in the last 6 days.</div>
+            <div class="rec-card-impact">
+              <span>Impact</span>
+              <div class="rec-card-impact-bar"><div class="rec-card-impact-fill" style="width:82%"></div></div>
+              <span>High</span>
+            </div>
+            <div class="rec-card-footer">
+              <button class="rec-card-btn" onclick="go('projects',document.querySelectorAll('.nav-item')[3],'scroll')">Request Moodboard</button>
+              <button class="rec-card-dismiss" onclick="dismissCard('rc-1')">Dismiss</button>
+            </div>
+          </div>
+
+          <!-- 2. PDP INSIGHT — Critical impact + revenue bleeding today -->
+          <div class="rec-card rc-pdp" id="rc-2">
+            <div class="rec-card-age">38 min ago</div>
+            <div class="rec-card-type">⬤ PDP Insight</div>
+            <div class="rec-card-sku">SKU-1089 · Linen Kurta Navy</div>
+            <div class="rec-card-title">Missing white-BG front view is costing conversions</div>
+            <div class="rec-card-body">SKU-1089 has a <strong>34% bounce rate</strong> on Myntra — 2.1× your category average. Real-time data shows this SKU is missing a clean white-background front-view shot. Competitors ranking above you have 4+ images; you have 2. Adding 2 assets could recover <strong>~Rs 1.8L/month</strong> in lost conversions at current traffic.</div>
+            <div class="rec-card-impact">
+              <span>Impact</span>
+              <div class="rec-card-impact-bar"><div class="rec-card-impact-fill" style="width:90%"></div></div>
+              <span>Critical</span>
+            </div>
+            <div class="rec-card-footer">
+              <button class="rec-card-btn">Fix Now — 24h</button>
+              <button class="rec-card-dismiss" onclick="dismissCard('rc-2')">Dismiss</button>
+            </div>
+          </div>
+
+          <!-- 3. DARK POST ROAS — Creative fatigue active right now -->
+          <div class="rec-card rc-roas" id="rc-3">
+            <div class="rec-card-age">1h ago</div>
+            <div class="rec-card-type">⬤ Dark Post · ROAS</div>
+            <div class="rec-card-sku">Campaign · Wedding Season Meta</div>
+            <div class="rec-card-title">Creative fatigue detected — swap the lead visual</div>
+            <div class="rec-card-body">Your current dark post creative (Heritage Warmth #3, solo model) has ROAS <strong>1.8×</strong> — down from 3.1× last week. Frequency has hit 4.2 for your core 25–40M Metro audience. A new visual with a <strong>CTA overlay and product-first framing</strong> is projected to restore ROAS to 2.9–3.4× based on category benchmarks and your Q1 data.</div>
+            <div class="rec-card-impact">
+              <span>Impact</span>
+              <div class="rec-card-impact-bar"><div class="rec-card-impact-fill" style="width:74%"></div></div>
+              <span>Medium–High</span>
+            </div>
+            <div class="rec-card-footer">
+              <button class="rec-card-btn">Generate A/B Variant</button>
+              <button class="rec-card-dismiss" onclick="dismissCard('rc-3')">Dismiss</button>
+            </div>
+          </div>
+
+          <!-- 4. GUERRILLA: COMMENT SEEDING — needs 5-7 day lead time before launch -->
+          <div class="rec-card rc-guerrilla" id="rc-5">
+            <div class="rec-card-age">Today</div>
+            <div class="rec-card-type">⬤ Guerrilla · Comment Seeding</div>
+            <div class="rec-card-sku">Campaign · Eid Collection Pre-Launch</div>
+            <div class="rec-card-title">Seed comments in competitor posts before your Eid launch</div>
+            <div class="rec-card-body">Target 10–15 high-engagement posts from ethnic wear competitors in your ICP segment over the next 7 days. Strategic comments from seed accounts build brand recall organically before paid ads launch. <strong>Category data: seeded threads in Indian fashion generate 2,400% more organic reach</strong> than equivalent paid impressions. Zero ad spend. Works best when deployed 5–7 days before campaign go-live.</div>
+            <div class="rec-card-impact">
+              <span>Impact</span>
+              <div class="rec-card-impact-bar"><div class="rec-card-impact-fill" style="width:68%"></div></div>
+              <span>Medium–High</span>
+            </div>
+            <div class="rec-card-footer">
+              <button class="rec-card-btn">Build Seed Plan</button>
+              <button class="rec-card-dismiss" onclick="dismissCard('rc-5')">Dismiss</button>
+            </div>
+          </div>
+
+          <!-- 5. GUERRILLA: INFLUENCER LAUNCH — high impact, planning lead time needed -->
+          <div class="rec-card rc-guerrilla" id="rc-6">
+            <div class="rec-card-age">Today</div>
+            <div class="rec-card-type">⬤ Guerrilla · Influencer Launch</div>
+            <div class="rec-card-sku">Campaign · Eid Collection Drop</div>
+            <div class="rec-card-title">Coordinated micro-influencer drop for the Eid collection</div>
+            <div class="rec-card-body">Brief 12 Indian ethnic wear micro-influencers (50K–200K followers) to post simultaneously on Day 1 of launch. Each receives an exclusive ZESTLY-produced preview asset pack tailored to their aesthetic. <strong>Coordinated micro-influencer drops outperform single macro-influencer partnerships by 3.4× on first-week sell-through</strong> in Indian fashion. Diana can generate 12 personalised asset sets from your existing Eid brief — no additional production cost.</div>
+            <div class="rec-card-impact">
+              <span>Impact</span>
+              <div class="rec-card-impact-bar"><div class="rec-card-impact-fill" style="width:78%"></div></div>
+              <span>High</span>
+            </div>
+            <div class="rec-card-footer">
+              <button class="rec-card-btn">Build Influencer List</button>
+              <button class="rec-card-dismiss" onclick="dismissCard('rc-6')">Dismiss</button>
+            </div>
+          </div>
+
+          <!-- 6. SEASONAL WINDOW — medium urgency -->
+          <div class="rec-card rc-seasonal" id="rc-4">
+            <div class="rec-card-age">Just now</div>
+            <div class="rec-card-type">⬤ Seasonal Window</div>
+            <div class="rec-card-title">Wedding Season search volume up 44% — expand channels</div>
+            <div class="rec-card-body">Google India shows Wedding Season searches up <strong>44% week-on-week</strong>. Your current brief covers only Meta — but your ICP for this category (groom + gifting) is active on <strong>Google Display and LinkedIn</strong> (B2B gifting, corporate bulk orders). Adding 12 assets for these channels could capture a segment your brief is currently missing entirely.</div>
+            <div class="rec-card-impact">
+              <span>Impact</span>
+              <div class="rec-card-impact-bar"><div class="rec-card-impact-fill" style="width:65%"></div></div>
+              <span>Medium</span>
+            </div>
+            <div class="rec-card-footer">
+              <button class="rec-card-btn" onclick="go('brief',document.querySelectorAll('.nav-item')[2],'scroll')">Add to Brief</button>
+              <button class="rec-card-dismiss" onclick="dismissCard('rc-4')">Dismiss</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BRAND IDENTITY + PIPELINE -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-title">Brand Identity</div>
+          <div class="sec-lbl">Color System</div>
+          <div class="brand-colors">
+            <div><div class="swatch" style="background:#1A1A2E"></div><div class="swatch-lbl">#1A1A2E</div></div>
+            <div><div class="swatch" style="background:#C8A96E"></div><div class="swatch-lbl">#C8A96E</div></div>
+            <div><div class="swatch" style="background:#fff"></div><div class="swatch-lbl">#FFFFFF</div></div>
+            <div><div class="swatch" style="background:#4A3728"></div><div class="swatch-lbl">#4A3728</div></div>
+            <div><div class="swatch" style="background:#E8E0D0"></div><div class="swatch-lbl">#E8E0D0</div></div>
+          </div>
+          <div class="sec-lbl" style="margin-top:16px">Brand Tone</div>
+          <div><span class="brand-tag">Heritage</span><span class="brand-tag">Premium</span><span class="brand-tag">Festive</span><span class="brand-tag">Contemporary</span><span class="brand-tag">Indian Formal</span></div>
+          <div class="sec-lbl" style="margin-top:16px">Active Catalogue</div>
+          <div style="font-size:28px;font-weight:700;margin-bottom:2px">284</div>
+          <div style="font-size:11px;color:var(--t2)">SKUs on Myntra + Website</div>
+          <div class="sec-lbl" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bsub)">Brand Knowledge Base</div>
+          <div style="display:flex;flex-direction:column;gap:0;background:var(--border);margin-bottom:4px">
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg1);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg1)'">
+              <div style="width:20px;height:20px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--t2);flex-shrink:0">BI</div>
+              <div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Brand Identity Guidelines</div><div style="font-size:9px;color:var(--t3)">Colors · Fonts · Tone — v3.2</div></div>
+              <div style="font-size:9px;color:var(--green);letter-spacing:.05em">→</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg1);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg1)'">
+              <div style="width:20px;height:20px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--t2);flex-shrink:0">AU</div>
+              <div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Audience Profile</div><div style="font-size:9px;color:var(--t3)">Demographics · Personas</div></div>
+              <div style="font-size:9px;color:var(--t3);letter-spacing:.05em">→</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg1);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg1)'">
+              <div style="width:20px;height:20px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--t2);flex-shrink:0">MS</div>
+              <div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Myntra Style Guide</div><div style="font-size:9px;color:var(--t3)">Image specs · BG requirements</div></div>
+              <div style="font-size:9px;color:var(--t3);letter-spacing:.05em">→</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg1);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg1)'">
+              <div style="width:20px;height:20px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--t2);flex-shrink:0">FC</div>
+              <div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Festive Calendar 2026</div><div style="font-size:9px;color:var(--t3)">Eid · Diwali · Wedding Season</div></div>
+              <div style="font-size:9px;color:var(--t3);letter-spacing:.05em">→</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bg1);cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg1)'">
+              <div style="width:20px;height:20px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--t2);flex-shrink:0">PH</div>
+              <div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performance History</div><div style="font-size:9px;color:var(--t3)">Q1 2026 direction data</div></div>
+              <div style="font-size:9px;color:var(--t3);letter-spacing:.05em">→</div>
+            </div>
+          </div>
+          <div style="font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:4px 0" onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--t3)'">View all 18 documents →</div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Task Pipeline</div>
+          <div class="up-item"><div class="up-date">Apr 14</div><div><div class="up-name">Summer Linen Collection</div><div class="up-ch">Instagram · Myntra · 60 assets</div></div><div class="up-status st-prod">In Production</div></div>
+          <div class="up-item"><div class="up-date">Apr 19</div><div><div class="up-name">Wedding Season Kurtas</div><div class="up-ch">Meta Ads · 24 variants</div></div><div class="up-status st-mood">Awaiting Moodboard</div></div>
+          <div class="up-item"><div class="up-date">May 2</div><div><div class="up-name">Ramadan Festive Edit</div><div class="up-ch">All Channels · 90 assets</div></div><div class="up-status st-appr">Direction Approved</div></div>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bsub)">
+            <div class="panel-title">Performance Memory</div>
+            <div style="font-size:12px;color:var(--t2);line-height:1.8"><span style="color:var(--green);font-weight:600">Warm-toned moodboards</span> outperform cool by 2.3× on engagement.<br><span style="color:var(--t1);font-weight:500">White-bg catalogue</span> converts 18% better on Myntra.<br>Lifestyle shots drive <span style="color:var(--t1);font-weight:500">4.1× more saves</span> than flat-lay.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRIEF STUDIO -->
+    <div class="screen" id="screen-brief">
+      <div class="brief-steps">
+        <div class="b-step done"><div class="b-step-num">01</div><div class="b-step-name">Campaign Type</div></div>
+        <div class="b-step active"><div class="b-step-num">02</div><div class="b-step-name">Product Focus</div></div>
+        <div class="b-step"><div class="b-step-num">03</div><div class="b-step-name">Channels</div></div>
+        <div class="b-step"><div class="b-step-num">04</div><div class="b-step-name">Deadline</div></div>
+        <div class="b-step"><div class="b-step-num">05</div><div class="b-step-name">Mood References</div></div>
+      </div>
+      <div class="form-h1">What products are you featuring?</div>
+      <div class="form-sub">Select the primary product category. ZESTLY will reference your active catalogue automatically.</div>
+      <div class="form-grid">
+        <div class="form-opt sel" onclick="selOpt(this)"><div>Formal Shirts</div><div class="form-opt-sub">142 SKUs active</div></div>
+        <div class="form-opt" onclick="selOpt(this)"><div>Linen Collection</div><div class="form-opt-sub">68 SKUs active</div></div>
+        <div class="form-opt" onclick="selOpt(this)"><div>Wedding Kurtas</div><div class="form-opt-sub">34 SKUs active</div></div>
+        <div class="form-opt" onclick="selOpt(this)"><div>Suiting</div><div class="form-opt-sub">89 SKUs active</div></div>
+        <div class="form-opt" onclick="selOpt(this)"><div>Casual Range</div><div class="form-opt-sub">51 SKUs active</div></div>
+        <div class="form-opt" onclick="selOpt(this)"><div>Custom / Mixed</div><div class="form-opt-sub">Manual entry</div></div>
+      </div>
+      <div style="margin-bottom:20px"><label class="form-lbl">Specific SKUs or notes (optional)</label><input class="form-input" placeholder="e.g. SKU-1024 — or leave blank to include full category"></div>
+      <div class="brief-nav"><button class="btn-s">← Previous</button><button class="btn-p">Next Step →</button></div>
+    </div>
+
+    <!-- CREATIVE DIRECTION -->
+    <div class="screen" id="screen-projects">
+
+      <div class="proj-section-hdr">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="proj-section-title">All Projects</div>
+          <div style="font-size:9px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--blue);padding:1px 7px">2 in production</div>
+        </div>
+        <div style="font-size:10px;color:var(--t3);letter-spacing:.05em">5 active projects · April 2026</div>
+      </div>
+
+      <div class="proj-list">
+
+        <!-- PROJECT 1: Summer Linen Collection — In Production, 62% -->
+        <div class="proj-card">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Summer Linen Collection</div>
+                <div class="up-status st-prod" style="margin-left:0">In Production</div>
+              </div>
+              <div class="proj-meta">Social Posts · PDP · Reels · 60 assets · Due Apr 14</div>
+            </div>
+            <div class="proj-actions">
+              <div class="proj-due">Apr 14</div>
+              <button class="btn-s" style="padding:5px 13px;font-size:10px" onclick="go('assets',document.querySelectorAll('.nav-item')[4],'scroll')">Review Assets</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Moodboard</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Direction</div></div>
+            <div class="step-conn step-conn-active"></div>
+            <div class="step-node"><div class="step-dot step-dot-active"></div><div class="step-lbl step-lbl-active">Production</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">QC</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Delivery</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-green" style="width:62%"></div></div>
+            <div class="proj-pct" style="color:var(--green)">62%</div>
+          </div>
+        </div>
+
+        <!-- PROJECT 2: Eid Collection — Brief Active, 8% -->
+        <div class="proj-card">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Eid Collection</div>
+                <div class="up-status" style="color:var(--amber);border:1px solid var(--amber);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;font-weight:600;margin-left:0">Brief Filed</div>
+              </div>
+              <div class="proj-meta">Social Posts · PDP · Reels · 60 assets · Due May 2</div>
+            </div>
+            <div class="proj-actions">
+              <div class="proj-due">May 2</div>
+              <button class="btn-s" style="padding:5px 13px;font-size:10px" onclick="go('brief',document.querySelectorAll('.nav-item')[2],'scroll')">View Brief</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-active"></div><div class="step-lbl step-lbl-active">Brief</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Moodboard</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Direction</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Production</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">QC</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Delivery</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-amber" style="width:8%"></div></div>
+            <div class="proj-pct" style="color:var(--amber)">8%</div>
+          </div>
+        </div>
+
+        <!-- PROJECT 3: Wedding Season Kurtas — Awaiting Moodboard, 15% -->
+        <div class="proj-card">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Wedding Season Kurtas</div>
+                <div class="up-status st-mood" style="margin-left:0">Awaiting Moodboard</div>
+              </div>
+              <div class="proj-meta">Social Posts · Reels · 24 variants · Due Apr 26</div>
+            </div>
+            <div class="proj-actions">
+              <div class="proj-due">Apr 26</div>
+              <button class="btn-s" style="padding:5px 13px;font-size:10px">Complete Brief</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-active"></div>
+            <div class="step-node"><div class="step-dot step-dot-active"></div><div class="step-lbl step-lbl-active">Moodboard</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Direction</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Production</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">QC</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Delivery</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-white" style="width:15%"></div></div>
+            <div class="proj-pct" style="color:var(--t2)">15%</div>
+          </div>
+        </div>
+
+        <!-- PROJECT 4: Ramadan Festive Edit — Direction Approved, 50% -->
+        <div class="proj-card">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Ramadan Festive Edit</div>
+                <div class="up-status st-appr" style="margin-left:0">Direction Approved</div>
+              </div>
+              <div class="proj-meta">Social Posts · PDP · Reels · Catalogue · LinkedIn · 90 assets · Due May 2</div>
+            </div>
+            <div class="proj-actions">
+              <div class="proj-due">May 2</div>
+              <button class="btn-s" style="padding:5px 13px;font-size:10px">Begin Production</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Moodboard</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Direction</div></div>
+            <div class="step-conn step-conn-active"></div>
+            <div class="step-node"><div class="step-dot step-dot-active"></div><div class="step-lbl step-lbl-active">Production</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">QC</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Delivery</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-green" style="width:50%"></div></div>
+            <div class="proj-pct" style="color:var(--green)">50%</div>
+          </div>
+        </div>
+
+        <!-- PROJECT 5: Q2 Myntra Catalogue — Catalogue-specific steps, Sampling active, 30% -->
+        <div class="proj-card">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Q2 Myntra Catalogue</div>
+                <div class="up-status st-prod" style="margin-left:0">In Production</div>
+              </div>
+              <div class="proj-meta">PDP · Catalogue · 284 SKUs · Due Apr 22</div>
+            </div>
+            <div class="proj-actions">
+              <div class="proj-due">Apr 22</div>
+              <button class="btn-s" style="padding:5px 13px;font-size:10px">View Progress</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Moodboard</div></div>
+            <div class="step-conn step-conn-active"></div>
+            <div class="step-node"><div class="step-dot step-dot-active"></div><div class="step-lbl step-lbl-active">Sampling</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Catalogue Gen.</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Data Upload</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Final QA</div></div>
+            <div class="step-conn step-conn-pending"></div>
+            <div class="step-node"><div class="step-dot step-dot-pending"></div><div class="step-lbl step-lbl-pending">Delivered</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-green" style="width:30%"></div></div>
+            <div class="proj-pct" style="color:var(--green)">30%</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- HISTORY SECTION -->
+      <div class="proj-hist-hdr">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="proj-hist-title">Delivered Projects</div>
+          <div style="font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);padding:1px 7px">3 completed</div>
+        </div>
+        <div style="font-size:10px;color:var(--t3);letter-spacing:.05em">Q4 2025 – Q1 2026</div>
+      </div>
+      <div class="proj-list">
+
+        <!-- HISTORY 1: Holi Campaign 2026 -->
+        <div class="proj-card proj-card-hist">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Holi Campaign 2026</div>
+                <div class="up-status st-appr" style="margin-left:0">Delivered</div>
+              </div>
+              <div class="proj-meta">Social Posts · Reels · 48 assets · Delivered Mar 14, 2026</div>
+            </div>
+            <div class="proj-actions">
+              <button class="btn-s" style="padding:5px 13px;font-size:10px">View Assets</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Moodboard</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Direction</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Production</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">QC</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Delivery</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-white" style="width:100%"></div></div>
+            <div class="proj-pct" style="color:var(--t2)">100%</div>
+          </div>
+        </div>
+
+        <!-- HISTORY 2: Q1 Myntra Catalogue -->
+        <div class="proj-card proj-card-hist">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Q1 Myntra Catalogue</div>
+                <div class="up-status st-appr" style="margin-left:0">Delivered</div>
+              </div>
+              <div class="proj-meta">PDP · Catalogue · 210 SKUs · Delivered Feb 28, 2026</div>
+            </div>
+            <div class="proj-actions">
+              <button class="btn-s" style="padding:5px 13px;font-size:10px">View Assets</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Moodboard</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Sampling</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Catalogue Gen.</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Data Upload</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Final QA</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Delivered</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-white" style="width:100%"></div></div>
+            <div class="proj-pct" style="color:var(--t2)">100%</div>
+          </div>
+        </div>
+
+        <!-- HISTORY 3: Diwali Campaign 2025 -->
+        <div class="proj-card proj-card-hist">
+          <div class="proj-top">
+            <div class="proj-info">
+              <div class="proj-title-row">
+                <div class="proj-title">Diwali Campaign 2025</div>
+                <div class="up-status st-appr" style="margin-left:0">Delivered</div>
+              </div>
+              <div class="proj-meta">Social Posts · PDP · Reels · Catalogue · LinkedIn · 90 assets · Delivered Nov 8, 2025</div>
+            </div>
+            <div class="proj-actions">
+              <button class="btn-s" style="padding:5px 13px;font-size:10px">View Assets</button>
+            </div>
+          </div>
+          <div class="proj-steps">
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Brief</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Moodboard</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Direction</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Production</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">QC</div></div>
+            <div class="step-conn step-conn-done"></div>
+            <div class="step-node"><div class="step-dot step-dot-done"></div><div class="step-lbl step-lbl-done">Delivery</div></div>
+          </div>
+          <div class="proj-prog-row">
+            <div class="proj-prog-track"><div class="proj-prog-fill proj-prog-fill-white" style="width:100%"></div></div>
+            <div class="proj-pct" style="color:var(--t2)">100%</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ASSET REVIEW -->
+    <div class="screen" id="screen-assets">
+      <div class="ch-tabs">
+        <div class="ch-tab active" onclick="selTab(this)">All (60)</div>
+        <div class="ch-tab" onclick="selTab(this)">Social Posts</div>
+        <div class="ch-tab" onclick="selTab(this)">PDP</div>
+        <div class="ch-tab" onclick="selTab(this)">Reels</div>
+        <div class="ch-tab" onclick="selTab(this)">Catalogue</div>
+        <div class="ch-tab" onclick="selTab(this)">LinkedIn</div>
+      </div>
+      <div class="asset-grid">
+        <div class="asset"><div class="asset-ph"><div class="asset-ph-txt">Linen Shirt<br><span style="font-size:9px">Front View</span></div></div><div class="a-badge">Social Post</div><div class="a-proj">Summer Linen</div><div class="a-appr">✓ Approved</div><div class="asset-ov"><button class="abtn abtn-a">Approved</button><button class="abtn abtn-r">Reject</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#0D0D0D"><div class="asset-ph-txt">Linen Shirt<br><span style="font-size:9px">Lifestyle</span></div></div><div class="a-badge">Social Post</div><div class="a-proj">Summer Linen</div><div class="a-appr">✓ Approved</div><div class="asset-ov"><button class="abtn abtn-a">Approved</button><button class="abtn abtn-r">Reject</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#080808"><div class="asset-ph-txt">Kurta Set<br><span style="font-size:9px">White BG</span></div></div><div class="a-badge">PDP</div><div class="a-proj">Summer Linen</div><div class="asset-ov"><button class="abtn abtn-a" onclick="approve(this)">Approve</button><button class="abtn abtn-r">Reject</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#0C0C0C"><div class="asset-ph-txt">Formal Shirt<br><span style="font-size:9px">Reel</span></div></div><div class="a-badge">Reels</div><div class="a-proj">Summer Linen</div><div class="a-rej">✕ Rejected</div><div class="asset-ov"><button class="abtn abtn-a" onclick="approve(this)">Approve</button><button class="abtn abtn-r">Rejected</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#0A0A0A"><div class="asset-ph-txt">Suiting<br><span style="font-size:9px">Lifestyle</span></div></div><div class="a-badge">Social Post</div><div class="a-proj">Summer Linen</div><div class="asset-ov"><button class="abtn abtn-a" onclick="approve(this)">Approve</button><button class="abtn abtn-r">Reject</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#0E0E0E"><div class="asset-ph-txt">Linen Pants<br><span style="font-size:9px">Catalogue</span></div></div><div class="a-badge">Catalogue</div><div class="a-proj">Q2 Myntra</div><div class="asset-ov"><button class="abtn abtn-a" onclick="approve(this)">Approve</button><button class="abtn abtn-r">Reject</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#090909"><div class="asset-ph-txt">Kurta Linen<br><span style="font-size:9px">White BG</span></div></div><div class="a-badge">PDP</div><div class="a-proj">Q2 Myntra</div><div class="a-appr">✓ Approved</div><div class="asset-ov"><button class="abtn abtn-a">Approved</button><button class="abtn abtn-r">Reject</button></div></div>
+        <div class="asset"><div class="asset-ph" style="background:#0B0B0B"><div class="asset-ph-txt">Shirt Set<br><span style="font-size:9px">LinkedIn</span></div></div><div class="a-badge">LinkedIn</div><div class="a-proj">Summer Linen</div><div class="asset-ov"><button class="abtn abtn-a" onclick="approve(this)">Approve</button><button class="abtn abtn-r">Reject</button></div></div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="screen" id="screen-calendar">
+      <div class="cv-layout">
+        <div class="cv-sub-sidebar">
+          <div class="cv-ss-hdr">
+            <span class="cv-ss-title">Calendar</span>
+            <span class="cv-ss-collapse">&#8674;</span>
+          </div>
+          <div class="cv-ss-np-wrap">
+            <button class="cv-ss-newpost">+ New Post <span class="cv-ss-np-ico">&#9998;</span></button>
+          </div>
+          <div class="cv-ss-item active">Calendar</div>
+          <div class="cv-ss-item">Week View</div>
+          <div class="cv-ss-item">Month View</div>
+          <div class="cv-ss-item">Drafts</div>
+          <div class="cv-ss-item">Pending Approval <span class="cv-ss-badge">2</span></div>
+          <div class="cv-ss-item">Rejected</div>
+          <div class="cv-ss-divider"></div>
+          <div class="cv-ss-sec">&#9660; Campaigns <span class="cv-ss-sec-add">+</span></div>
+          <div class="cv-ss-camp-item parent"><span class="cv-ss-camp-dot" style="background:var(--t3)"></span>Active</div>
+          <div class="cv-ss-camp-item"><span class="cv-ss-camp-dot" style="background:var(--green)"></span>Summer Linen</div>
+          <div class="cv-ss-camp-item"><span class="cv-ss-camp-dot" style="background:var(--amber)"></span>Eid Collection</div>
+          <div class="cv-ss-camp-item"><span class="cv-ss-camp-dot" style="background:var(--purple)"></span>Wedding Season</div>
+          <div class="cv-ss-camp-item"><span class="cv-ss-camp-dot" style="background:var(--blue)"></span>Q2 Myntra</div>
+          <div class="cv-ss-camp-item cv-ss-item-dim"><span class="cv-ss-camp-dot" style="background:var(--t3)"></span>Archived</div>
+          <div class="cv-ss-divider"></div>
+          <div class="cv-ss-sec">Tools</div>
+          <div class="cv-ss-item">Asset Library</div>
+          <div class="cv-ss-item">Performance</div>
+          <div class="cv-ss-item">Failed Posts</div>
+          <div class="cv-ss-times">
+            <div class="cv-ss-times-hdr">Best Times</div>
+            <div class="cv-ss-times-sub">Based on Siyaram&#39;s audience</div>
+            <div class="cv-ss-row best"><span class="cv-ss-day">Mon</span><span class="cv-ss-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+            <div class="cv-ss-row best"><span class="cv-ss-day">Tue</span><span class="cv-ss-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+            <div class="cv-ss-row"><span class="cv-ss-day">Wed</span><span class="cv-ss-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span></div>
+            <div class="cv-ss-row"><span class="cv-ss-day">Thu</span><span class="cv-ss-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span></div>
+            <div class="cv-ss-row best"><span class="cv-ss-day">Fri</span><span class="cv-ss-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+            <div class="cv-ss-row"><span class="cv-ss-day">Sat</span><span class="cv-ss-stars">&#9733;&#9733;&#9733;&#9734;&#9734;</span></div>
+            <div class="cv-ss-row"><span class="cv-ss-day">Sun</span><span class="cv-ss-stars">&#9733;&#9733;&#9734;&#9734;&#9734;</span></div>
+            <div class="cv-ss-times-note">&#9733; = post engagement score</div>
+          </div>
+        </div>
+        <div class="cv-main">
+      <div class="cv-toolbar">
+        <div class="cv-nav">
+          <button class="cv-nav-btn">&#8592;</button>
+          <button class="cv-today-btn">Today</button>
+          <button class="cv-nav-btn">&#8594;</button>
+          <div class="cv-period">Week of April 13, 2026</div>
+        </div>
+        <div class="cv-controls">
+          <button class="cv-filter-btn">&#9638; Filters</button>
+          <div class="cv-view-tog">
+            <button class="cv-view-btn">List</button>
+            <button class="cv-view-btn active">Week</button>
+            <button class="cv-view-btn">Month</button>
+          </div>
+          <button class="cv-newpost-btn">+ New Post</button>
+        </div>
+      </div>
+      <div class="cv-filterbar">
+        <select class="cv-fsel"><option>Projects: All</option><option>Summer Linen</option><option>Eid Collection</option><option>Wedding Season</option><option>Q2 Myntra</option></select>
+        <select class="cv-fsel"><option>Asset Type: All</option><option>Social Posts</option><option>Reels</option><option>PDP</option><option>Catalogue</option><option>LinkedIn</option></select>
+        <select class="cv-fsel"><option>Status: All</option><option>Scheduled</option><option>Pending Approval</option><option>In Production</option><option>Delivered</option></select>
+        <button class="cv-clear">Clear All</button>
+      </div>
+      <div class="cv-grid">
+        <div class="cv-dh tcol"><div class="cv-day-info"><span class="cv-dname">Mon</span><span class="cv-dnum tnum">13</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-dh"><div class="cv-day-info"><span class="cv-dname">Tue</span><span class="cv-dnum">14</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-dh"><div class="cv-day-info"><span class="cv-dname">Wed</span><span class="cv-dnum">15</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-dh"><div class="cv-day-info"><span class="cv-dname">Thu</span><span class="cv-dnum">16</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-dh"><div class="cv-day-info"><span class="cv-dname">Fri</span><span class="cv-dnum">17</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-dh"><div class="cv-day-info"><span class="cv-dname">Sat</span><span class="cv-dnum">18</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-dh"><div class="cv-day-info"><span class="cv-dname">Sun</span><span class="cv-dnum">19</span></div><span class="cv-dplus">+</span></div>
+        <div class="cv-spans">
+          <div class="cv-span cv-span-g" style="grid-column:1/4">Summer Linen Collection</div>
+          <div class="cv-span cv-span-emp" style="grid-column:4/5"></div>
+          <div class="cv-span cv-span-a" style="grid-column:5/8">Eid Collection</div>
+        </div>
+        <div class="cv-day tcol">
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-ig">IG</div><span class="cv-time">9:00 AM</span></div><div class="cv-status-dot sd-sched"></div></div>
+            <div class="cv-card-title">Summer Linen &#8212; Campaign Reel</div>
+            <div class="cv-card-row"><div class="cv-thumb" style="background:linear-gradient(135deg,#1a0a12,#0a0008)"></div><div class="cv-chip chip-reels">Reels</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-li">LI</div><span class="cv-time">2:00 PM</span></div><div class="cv-status-dot sd-sched"></div></div>
+            <div class="cv-card-title">Why Indian brands need visual intelligence, not just AI tools</div>
+            <div class="cv-card-row"><div class="cv-chip chip-social">Social Post</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-diana">DI</div><span class="cv-time">4:30 PM</span></div><div class="cv-status-dot sd-del"></div></div>
+            <div class="cv-card-title">Weekly Performance Report &#8212; auto-generated</div>
+            <div class="cv-card-row"><div class="cv-chip chip-report">Report</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+        <div class="cv-day">
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-ig">IG</div><span class="cv-time">10:00 AM</span></div><div class="cv-status-dot sd-pend"></div></div>
+            <div class="cv-card-title">Summer Linen Dark Post &#8212; 18 variants pending approval</div>
+            <div class="cv-card-row"><div class="cv-thumb" style="background:linear-gradient(135deg,#1a0e00,#0a0800)"></div><div class="cv-chip chip-social">Dark Post</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-meta">M</div><span class="cv-time">3:00 PM</span></div><div class="cv-status-dot sd-pend"></div></div>
+            <div class="cv-card-title">Heritage Warmth &#8212; A/B Creative Rotation</div>
+            <div class="cv-card-row"><div class="cv-chip chip-pdp">Ad Creative</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+        <div class="cv-day">
+          <div class="cv-milestone">
+            <div class="cv-ms-label">&#8595; Delivery</div>
+            <div class="cv-ms-title">Summer Linen &#8212; Final Asset Pack</div>
+            <div class="cv-ms-sub">60 assets &#183; Social Posts &#183; PDP &#183; Reels</div>
+          </div>
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-all" style="font-size:5px">ALL</div><span class="cv-time">11:00 AM</span></div><div class="cv-status-dot sd-del"></div></div>
+            <div class="cv-card-title">Asset delivery confirmation + client review link sent</div>
+            <div class="cv-card-row"><div class="cv-chip chip-delivery">Delivered</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+        <div class="cv-day">
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-ig">IG</div><span class="cv-time">10:00 AM</span></div><div class="cv-status-dot sd-rev"></div></div>
+            <div class="cv-card-title">Q2 Myntra Catalogue &#8212; QC Review (284 SKUs)</div>
+            <div class="cv-card-row"><div class="cv-thumb" style="background:linear-gradient(135deg,#0e1520,#080d14)"></div><div class="cv-chip chip-pdp">Catalogue</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-li">LI</div><span class="cv-time">2:00 PM</span></div><div class="cv-status-dot sd-brief"></div></div>
+            <div class="cv-card-title">Siyaram&#39;s visual uplift &#8212; client case study draft</div>
+            <div class="cv-card-row"><div class="cv-chip chip-brief">Draft</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+        <div class="cv-day">
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-brief" style="font-size:5px">EID</div><span class="cv-time">9:00 AM</span></div><div class="cv-status-dot sd-pend"></div></div>
+            <div class="cv-card-title">Eid Collection Brief Kickoff &#8212; warm ochre + terracotta palette</div>
+            <div class="cv-card-row"><div class="cv-chip chip-brief">Brief</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+        <div class="cv-day">
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-diana">DI</div><span class="cv-time">11:00 AM</span></div><div class="cv-status-dot sd-sched"></div></div>
+            <div class="cv-card-title">Eid Moodboard Generation &#8212; Heritage Warmth direction</div>
+            <div class="cv-card-row"><div class="cv-chip chip-reels">Moodboard</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+        <div class="cv-day">
+          <div class="cv-milestone" style="border-color:var(--purple);background:rgba(167,139,250,.07)">
+            <div class="cv-ms-label" style="color:var(--purple)">&#9679; Brief Due</div>
+            <div class="cv-ms-title">Wedding Season Kurtas Brief</div>
+            <div class="cv-ms-sub">3 required fields missing</div>
+          </div>
+          <div class="cv-card">
+            <div class="cv-card-hdr"><div class="cv-card-meta"><div class="cv-pico pi-li">LI</div><span class="cv-time">11:00 AM</span></div><div class="cv-status-dot sd-sched"></div></div>
+            <div class="cv-card-title">Wedding Season &#8212; Pre-launch brand story post</div>
+            <div class="cv-card-row"><div class="cv-chip chip-social">Social Post</div></div>
+            <div class="cv-card-acts"><span class="cv-act-ico">&#9654;</span><span class="cv-act-ico">&#9998;</span><span class="cv-act-ico">&#183;&#183;&#183;</span></div>
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="screen" id="screen-performance">
+      <div class="pr-layout">
+
+        <!-- Sub-sidebar -->
+        <div class="pr-sidebar">
+          <div class="pr-sb-hdr">
+            <span class="pr-sb-title">Performance</span>
+            <span class="pr-sb-ico">&#9638;</span>
+          </div>
+          <button class="pr-sb-export">&#8595; Export Report</button>
+          <div class="pr-sb-item active">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><rect width="8" height="8"/></svg>
+            Overview
+          </div>
+          <div class="pr-sb-divider"></div>
+          <div class="pr-sb-sec">Platforms</div>
+          <div class="pr-sb-item">
+            <div class="pr-sb-dot" style="background:#e4405f"></div>Instagram
+          </div>
+          <div class="pr-sb-item">
+            <div class="pr-sb-dot" style="background:#0077b5"></div>LinkedIn
+          </div>
+          <div class="pr-sb-item">
+            <div class="pr-sb-dot" style="background:#888"></div>X / Twitter
+          </div>
+          <div class="pr-sb-item dim">
+            <div class="pr-sb-dot" style="background:#333"></div>Meta Ads
+            <span style="font-size:7px;margin-left:auto;letter-spacing:.06em;text-transform:uppercase">Soon</span>
+          </div>
+          <div class="pr-sb-item dim">
+            <div class="pr-sb-dot" style="background:#333"></div>Google Ads
+            <span style="font-size:7px;margin-left:auto;letter-spacing:.06em;text-transform:uppercase">Soon</span>
+          </div>
+          <div class="pr-sb-divider"></div>
+          <div class="pr-sb-sec">&#9660; My Reports <span class="pr-sb-sec-add">+</span></div>
+          <div class="pr-sb-item active-sub">Cross-Platform Summary</div>
+          <div class="pr-sb-item sub">Organic Campaign Analysis</div>
+          <div class="pr-sb-item sub">Paid Campaign Performance</div>
+          <div class="pr-sb-item sub">Quarterly Analysis</div>
+          <div class="pr-sb-item sub">Comment Seeding &amp; Reply Performance</div>
+          <div class="pr-sb-item sub">Meme Page Performance</div>
+          <div class="pr-sb-item sub">Founder Profile Analysis</div>
+          <div class="pr-sb-divider"></div>
+          <div class="pr-sb-sec">&#9654; By Network</div>
+          <div class="pr-sb-sec">&#9654; Campaign Intelligence</div>
+          <div class="pr-sb-sec">&#9654; Content Performance</div>
+          <div class="pr-sb-sec">&#9654; Competitors</div>
+          <div class="pr-sb-sec">&#9654; Trends</div>
+          <div class="pr-sb-footer">Customize Report</div>
+        </div>
+
+        <!-- Main content -->
+        <div class="pr-main">
+
+          <!-- Header -->
+          <div class="pr-hdr">
+            <div>
+              <div class="pr-hdr-title">
+                Cross-Platform Performance
+                <span class="pr-hdr-star">&#9733;</span>
+              </div>
+              <div class="pr-hdr-sub">
+                <span class="pr-live-dot"></span>
+                Siyaram&#39;s India &nbsp;&#183;&nbsp; Instagram &middot; LinkedIn &middot; X/Twitter
+                &nbsp;&#183;&nbsp; Last updated 2 min ago
+              </div>
+            </div>
+            <div class="pr-hdr-actions">
+              <button class="pr-date-btn">&#128197; Mar 14 &#8211; Apr 13, 2026 &nbsp;vs&nbsp; Feb 12 &#8211; Mar 13</button>
+              <button class="pr-add-btn">+ Widget</button>
+            </div>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="pr-filterbar">
+            <button class="pr-filter">Post Type &#9662;</button>
+            <button class="pr-filter active">Last 30 Days &#9662;</button>
+            <button class="pr-filter">All Platforms &#9662;</button>
+            <button class="pr-filter">vs. Previous Period</button>
+          </div>
+
+          <!-- Card 1: KPI Summary + Chart -->
+          <div class="pr-card">
+            <div class="pr-card-hdr">Cross-Network Performance Summary</div>
+            <div class="pr-card-sub">Total reach and engagement across all connected channels, Mar 14 &#8211; Apr 13, 2026</div>
+            <div class="pr-card-filters">
+              <button class="pr-cf">&#9654; Post</button>
+              <button class="pr-cf">&#128197; Reporting Period</button>
+              <button class="pr-cf">&#9898; All Sources</button>
+              <button class="pr-cf">&#9707; All Post Types</button>
+            </div>
+            <div class="pr-kpis">
+              <div class="pr-kpi">
+                <div class="pr-kpi-lbl">Impressions</div>
+                <div class="pr-kpi-val">847,320</div>
+                <div class="pr-kpi-trend pr-trend-up">&#8599; 12.4% <span class="pr-trend-sub">vs prev. period</span></div>
+              </div>
+              <div class="pr-kpi">
+                <div class="pr-kpi-lbl">Engagements</div>
+                <div class="pr-kpi-val">31,840</div>
+                <div class="pr-kpi-trend pr-trend-up">&#8599; 8.7% <span class="pr-trend-sub">vs prev. period</span></div>
+              </div>
+              <div class="pr-kpi">
+                <div class="pr-kpi-lbl">Avg. Engagement Rate</div>
+                <div class="pr-kpi-val">3.76%</div>
+                <div class="pr-kpi-trend pr-trend-up">&#8599; 0.4pp <span class="pr-trend-sub">vs 1.9% industry avg</span></div>
+              </div>
+              <div class="pr-kpi">
+                <div class="pr-kpi-lbl">Best ROAS (Heritage Warmth)</div>
+                <div class="pr-kpi-val" style="color:var(--amber)">1.8&#215;</div>
+                <div class="pr-kpi-trend pr-trend-down">&#8600; 1.3&#215; <span class="pr-trend-sub">freq 4.2 fatigue</span></div>
+              </div>
+            </div>
+            <!-- Chart -->
+            <div class="pr-chart-hdr">
+              <span class="pr-chart-title">Engagement Trend &mdash; Daily</span>
+              <div class="pr-chart-legend">
+                <span class="pr-leg-item"><span class="pr-leg-line" style="background:#e4405f"></span>Instagram</span>
+                <span class="pr-leg-item"><span class="pr-leg-line" style="background:#0077b5"></span>LinkedIn</span>
+                <span class="pr-leg-item"><span class="pr-leg-line" style="background:#666;width:18px;height:2px;border-top:2px dashed #666;background:transparent"></span>X / Twitter</span>
+              </div>
+            </div>
+            <svg class="pr-chart-wrap" viewBox="0 0 700 165" preserveAspectRatio="none" style="width:100%;height:165px;display:block">
+  <!-- Grid lines -->
+  <line x1="50" y1="10" x2="690" y2="10" stroke="#1a1a1a" stroke-width="1"/>
+  <line x1="50" y1="50" x2="690" y2="50" stroke="#1a1a1a" stroke-width="1"/>
+  <line x1="50" y1="90" x2="690" y2="90" stroke="#1a1a1a" stroke-width="1"/>
+  <line x1="50" y1="130" x2="690" y2="130" stroke="#1a1a1a" stroke-width="1"/>
+  <!-- Y axis labels -->
+  <text x="44" y="13" text-anchor="end" fill="#555" font-size="9" font-family="DM Sans">3K</text>
+  <text x="44" y="53" text-anchor="end" fill="#555" font-size="9" font-family="DM Sans">2K</text>
+  <text x="44" y="93" text-anchor="end" fill="#555" font-size="9" font-family="DM Sans">1K</text>
+  <text x="44" y="133" text-anchor="end" fill="#555" font-size="9" font-family="DM Sans">0</text>
+  <!-- X axis labels -->
+  <text x="50" y="148" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans">Apr 1</text>
+  <text x="210" y="148" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans">Apr 4</text>
+  <text x="370" y="148" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans">Apr 7</text>
+  <text x="530" y="148" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans">Apr 10</text>
+  <text x="690" y="148" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans">Apr 13</text>
+  <!-- IG fill -->
+  <polygon points="50,130 50,82 103,72 157,91 210,46 263,58 317,64 370,34 423,46 477,54 530,18 583,38 637,46 690,26 690,130" fill="#e4405f" opacity="0.07"/>
+  <!-- LI fill -->
+  <polygon points="50,130 50,113 103,115 157,110 210,103 263,106 317,106 370,101 423,103 477,100 530,97 583,98 637,98 690,99 690,130" fill="#0077b5" opacity="0.09"/>
+  <!-- X fill -->
+  <polygon points="50,130 50,123 103,122 157,124 210,116 263,118 317,119 370,115 423,116 477,118 530,113 583,114 637,116 690,114 690,130" fill="#888888" opacity="0.07"/>
+  <!-- IG line -->
+  <polyline points="50,82 103,72 157,91 210,46 263,58 317,64 370,34 423,46 477,54 530,18 583,38 637,46 690,26" fill="none" stroke="#e4405f" stroke-width="2" stroke-linejoin="round"/>
+  <!-- LI line -->
+  <polyline points="50,113 103,115 157,110 210,103 263,106 317,106 370,101 423,103 477,100 530,97 583,98 637,98 690,99" fill="none" stroke="#0077b5" stroke-width="2" stroke-linejoin="round"/>
+  <!-- X line -->
+  <polyline points="50,123 103,122 157,124 210,116 263,118 317,119 370,115 423,116 477,118 530,113 583,114 637,116 690,114" fill="none" stroke="#666666" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="4,3"/>
+  <!-- Today marker -->
+  <line x1="690" y1="10" x2="690" y2="130" stroke="#9EFF00" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="684" y="8" text-anchor="middle" fill="#9EFF00" font-size="7" font-family="DM Sans">Today</text>
+  <!-- IG dots at peak -->
+  <circle cx="530" cy="18" r="3" fill="#e4405f"/>
+  <circle cx="690" cy="26" r="3" fill="#e4405f"/>
+</svg>
+          </div>
+
+          <!-- Card 2: Post Performance -->
+          <div class="pr-card">
+            <div class="pr-card-hdr">Cross-Platform Content Performance</div>
+            <div class="pr-card-sub">Top assets ranked by engagements. Last 30 days across all connected channels.</div>
+            <div class="pr-card-filters">
+              <button class="pr-cf">&#9654; Post</button>
+              <button class="pr-cf">&#8734; Lifetime</button>
+              <button class="pr-cf">&#8595; Engagements</button>
+              <button class="pr-cf">&#9898; All Sources</button>
+              <button class="pr-cf">&#9873; All Tags</button>
+              <button class="pr-cf">&#128100; All Channels</button>
+            </div>
+            <div class="pr-posts">
+              <!-- Post 1: IG Reel -->
+              <div class="pr-post-card">
+                <div class="pr-post-top" style="background:#e4405f"></div>
+                <div class="pr-post-meta">
+                  <div class="pr-post-pico pi-ig">IG</div>
+                  <span class="pr-post-handle">@siyarams.india</span>
+                </div>
+                <div class="pr-post-ts">Reel &middot; Apr 8, 2026 &middot; 9:00 AM</div>
+                <div class="pr-post-body">Heritage Warmth direction &mdash; Summer Linen campaign reel. Warm ochre tones, courtyard setting. This content is performing 2.3&#215; above your average engagement rate.</div>
+                <div class="pr-post-thumb" style="background:linear-gradient(145deg,#1a0e00,#0a0800)"></div>
+                <div class="pr-post-foot">
+                  <div>
+                    <div class="pr-post-metric-lbl">Saves</div>
+                    <div class="pr-post-metric" style="color:var(--green)">2,341</div>
+                  </div>
+                  <span class="pr-post-badge prb-del">Delivered</span>
+                </div>
+                <div style="padding:8px 12px;display:flex;gap:10px;border-top:1px solid var(--border)">
+                  <span class="pr-post-act">&#183;&#183;&#183;</span>
+                  <span class="pr-post-act">&#9873;</span>
+                  <span class="pr-post-act">&#9993;</span>
+                  <span style="margin-left:auto;font-size:9px;color:var(--t3)">CTR 4.2%</span>
+                </div>
+              </div>
+              <!-- Post 2: LinkedIn -->
+              <div class="pr-post-card">
+                <div class="pr-post-top" style="background:#0077b5"></div>
+                <div class="pr-post-meta">
+                  <div class="pr-post-pico pi-li">LI</div>
+                  <span class="pr-post-handle">Anurag Poddar</span>
+                </div>
+                <div class="pr-post-ts">Post &middot; Apr 5, 2026 &middot; 2:00 PM</div>
+                <div class="pr-post-body">Why Indian fashion brands are switching from studios to AI visual intelligence. The hidden cost of coordinating 15&#8211;25 hrs/week of vendor work and what that does to your campaign velocity.</div>
+                <div class="pr-post-thumb" style="background:linear-gradient(145deg,#0e1520,#080d14)"></div>
+                <div class="pr-post-foot">
+                  <div>
+                    <div class="pr-post-metric-lbl">Impressions</div>
+                    <div class="pr-post-metric" style="color:var(--blue)">12,400</div>
+                  </div>
+                  <span class="pr-post-badge prb-live">Live</span>
+                </div>
+                <div style="padding:8px 12px;display:flex;gap:10px;border-top:1px solid var(--border)">
+                  <span class="pr-post-act">&#183;&#183;&#183;</span>
+                  <span class="pr-post-act">&#9873;</span>
+                  <span class="pr-post-act">&#9993;</span>
+                  <span style="margin-left:auto;font-size:9px;color:var(--t3)">Clicks 284</span>
+                </div>
+              </div>
+              <!-- Post 3: X -->
+              <div class="pr-post-card">
+                <div class="pr-post-top" style="background:#333"></div>
+                <div class="pr-post-meta">
+                  <div class="pr-post-pico" style="background:#111;color:var(--t2);border:1px solid var(--border);font-size:8px">X</div>
+                  <span class="pr-post-handle">@siyarams_india</span>
+                </div>
+                <div class="pr-post-ts">Post &middot; Apr 3, 2026 &middot; 11:00 AM</div>
+                <div class="pr-post-body">Summer Linen collection drops this week. Every image generated, reviewed, and delivered in 48 hours. No studio. No models. No delays.</div>
+                <div class="pr-post-thumb" style="background:linear-gradient(145deg,#141414,#0a0a0a)"></div>
+                <div class="pr-post-foot">
+                  <div>
+                    <div class="pr-post-metric-lbl">Impressions</div>
+                    <div class="pr-post-metric">8,200</div>
+                  </div>
+                  <span class="pr-post-badge prb-live">Live</span>
+                </div>
+                <div style="padding:8px 12px;display:flex;gap:10px;border-top:1px solid var(--border)">
+                  <span class="pr-post-act">&#183;&#183;&#183;</span>
+                  <span class="pr-post-act">&#9873;</span>
+                  <span class="pr-post-act">&#9993;</span>
+                  <span style="margin-left:auto;font-size:9px;color:var(--t3)">Engagements 412</span>
+                </div>
+              </div>
+              <!-- Post 4: IG Carousel -->
+              <div class="pr-post-card">
+                <div class="pr-post-top" style="background:#e4405f"></div>
+                <div class="pr-post-meta">
+                  <div class="pr-post-pico pi-ig">IG</div>
+                  <span class="pr-post-handle">@siyarams.india</span>
+                </div>
+                <div class="pr-post-ts">Carousel &middot; Apr 1, 2026 &middot; 9:00 AM</div>
+                <div class="pr-post-body">Q2 Myntra Catalogue PDP assets. White-BG front + side views for 48 SKUs. Linen Kurta Navy (SKU-1089) showing 34% lower bounce after hero image update.</div>
+                <div class="pr-post-thumb" style="background:linear-gradient(145deg,#181818,#0c0c0c)"></div>
+                <div class="pr-post-foot">
+                  <div>
+                    <div class="pr-post-metric-lbl">Saves</div>
+                    <div class="pr-post-metric" style="color:var(--green)">1,890</div>
+                  </div>
+                  <span class="pr-post-badge prb-del">Delivered</span>
+                </div>
+                <div style="padding:8px 12px;display:flex;gap:10px;border-top:1px solid var(--border)">
+                  <span class="pr-post-act">&#183;&#183;&#183;</span>
+                  <span class="pr-post-act">&#9873;</span>
+                  <span class="pr-post-act">&#9993;</span>
+                  <span style="margin-left:auto;font-size:9px;color:var(--t3)">CTR 3.8%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: AI Content Recommendations -->
+          <div class="pr-card">
+            <div class="pr-ai-hdr">
+              <div class="pr-ai-dot"></div>
+              <div class="pr-card-hdr" style="margin:0">Recommendations</div>
+            </div>
+            <div class="pr-card-sub">Real-time intelligence based on cross-platform performance. Updated every 15 minutes.</div>
+            <div class="pr-recs">
+              <!-- Rec 1: Creative fatigue -->
+              <div class="pr-rec">
+                <div class="pr-rec-type" style="color:var(--amber)">
+                  <div class="pr-rec-icon" style="background:var(--amber)"></div>
+                  Campaign Creative
+                </div>
+                <div class="pr-rec-h">Heritage Warmth #3 is fatiguing &mdash; generate replacements before Eid window</div>
+                <div class="pr-rec-txt">ROAS dropped from 3.1&#215; to 1.8&#215; in 6 days. Frequency hit 4.2. The direction still resonates &mdash; the creative itself is stale. 3 new variants with same palette but different composition will reset ROAS. Thursday launch window optimal for Eid audience.</div>
+                <button class="pr-rec-btn pr-rec-btn-a">Generate 3 Variants</button>
+              </div>
+              <!-- Rec 2: Platform opportunity -->
+              <div class="pr-rec">
+                <div class="pr-rec-type" style="color:var(--green)">
+                  <div class="pr-rec-icon" style="background:var(--green)"></div>
+                  Platform Opportunity
+                </div>
+                <div class="pr-rec-h">LinkedIn organic reach up 34% this month &mdash; Wedding Season is missing it</div>
+                <div class="pr-rec-txt">Your LinkedIn audience is engaging 2.1&#215; more with lifestyle brand storytelling vs product posts. The Wedding Season brief has no LinkedIn B2B gifting angle. 40 asset brief could add 12 LinkedIn-native assets with minimal incremental cost and 2.1&#215; impression boost.</div>
+                <button class="pr-rec-btn pr-rec-btn-g">Add to Brief</button>
+              </div>
+              <!-- Rec 3: Timing -->
+              <div class="pr-rec">
+                <div class="pr-rec-type" style="color:var(--blue)">
+                  <div class="pr-rec-icon" style="background:var(--blue)"></div>
+                  Timing Intelligence
+                </div>
+                <div class="pr-rec-h">Mon/Tue 9AM drives 2.4&#215; more saves &mdash; 3 scheduled posts conflict with this window</div>
+                <div class="pr-rec-txt">Instagram data shows Mon&#8211;Tue at 9&#8211;10AM IST generates 2.4&#215; higher save rates for your audience vs other slots. 3 upcoming posts are scheduled for Wed&#8211;Thu afternoon. Rescheduling adds an estimated 1,200+ saves over next 30 days at zero extra cost.</div>
+                <button class="pr-rec-btn pr-rec-btn-b">Reschedule Posts</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end pr-main -->
+      </div><!-- end pr-layout -->
+    </div>
+
+    <!-- LIBRARY -->
+    <div class="screen" id="screen-library">
+      <div class="lib-toolbar">
+        <input class="lib-search" placeholder="Search by SKU, product name, or tag...">
+        <div class="lib-cats">
+          <div class="lib-cat active" onclick="selLib(this)">All (284)</div>
+          <div class="lib-cat" onclick="selLib(this)">Kurtas</div>
+          <div class="lib-cat" onclick="selLib(this)">Shirts</div>
+          <div class="lib-cat" onclick="selLib(this)">Suits</div>
+          <div class="lib-cat" onclick="selLib(this)">Linen</div>
+          <div class="lib-cat" onclick="selLib(this)">Wedding</div>
+        </div>
+        <select class="lib-sort"><option>Newest First</option><option>Oldest First</option><option>SKU A–Z</option><option>Untagged First</option></select>
+        <div class="lib-count">284 assets · 12 untagged</div>
+      </div>
+      <div class="lib-grid">
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#1a1a1a,#0d0d0d)"></div><div class="lib-sku">SKU-1089</div><div class="lib-cat-tag lct-linen">Linen</div><div class="lib-info"><div class="lib-prod-name">Linen Kurta White</div><div class="lib-date">Apr 8, 2026 · 6 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#0e1520,#080d14)"></div><div class="lib-sku">SKU-2341</div><div class="lib-cat-tag lct-shirt">Shirt</div><div class="lib-info"><div class="lib-prod-name">Formal Shirt Navy</div><div class="lib-date">Apr 7, 2026 · 4 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#141414,#0a0a0a)"></div><div class="lib-sku">SKU-0892</div><div class="lib-cat-tag lct-suit">Suit</div><div class="lib-info"><div class="lib-prod-name">Suiting Charcoal</div><div class="lib-date">Apr 6, 2026 · 8 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#1a1610,#100e08)"></div><div class="lib-sku">SKU-1234</div><div class="lib-cat-tag lct-linen">Linen</div><div class="lib-info"><div class="lib-prod-name">Linen Pants Beige</div><div class="lib-date">Apr 5, 2026 · 5 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#1a0e00,#100900)"></div><div class="lib-sku">SKU-3421</div><div class="lib-cat-tag lct-kurta">Kurta</div><div class="lib-info"><div class="lib-prod-name">Kurta Set Ochre</div><div class="lib-date">Apr 3, 2026 · 7 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#181818,#0c0c0c)"></div><div class="lib-sku">SKU-1567</div><div class="lib-cat-tag lct-shirt">Shirt</div><div class="lib-info"><div class="lib-prod-name">Shirt Linen Cream</div><div class="lib-date">Apr 2, 2026 · 4 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#160a16,#0d060d)"></div><div class="lib-sku">SKU-4512</div><div class="lib-cat-tag lct-wedding">Wedding</div><div class="lib-info"><div class="lib-prod-name">Wedding Sherwani</div><div class="lib-date">Mar 28, 2026 · 10 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#0c1218,#080c10)"></div><div class="lib-sku">SKU-2890</div><div class="lib-cat-tag lct-suit">Suit</div><div class="lib-info"><div class="lib-prod-name">Suit Set Navy</div><div class="lib-date">Mar 25, 2026 · 6 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#121810,#0a100a)"></div><div class="lib-sku">SKU-5123</div><div class="lib-cat-tag lct-kurta">Kurta</div><div class="lib-info"><div class="lib-prod-name">Casual Kurta Sage</div><div class="lib-date">Mar 22, 2026 · 5 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#141a10,#0c1008)"></div><div class="lib-sku">SKU-3890</div><div class="lib-cat-tag lct-linen">Linen</div><div class="lib-info"><div class="lib-prod-name">Linen Blazer Olive</div><div class="lib-date">Mar 18, 2026 · 4 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#101010,#080808)"></div><div class="lib-sku">SKU-6234</div><div class="lib-cat-tag lct-suit">Suit</div><div class="lib-info"><div class="lib-prod-name">Formal Set Black</div><div class="lib-date">Mar 15, 2026 · 8 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+        <div class="lib-card"><div class="lib-img" style="background:linear-gradient(145deg,#1a1000,#100a00)"></div><div class="lib-sku">SKU-7891</div><div class="lib-cat-tag lct-kurta">Kurta</div><div class="lib-info"><div class="lib-prod-name">Festive Kurta Gold</div><div class="lib-date">Mar 10, 2026 · 9 raw files</div></div><div class="lib-overlay"><button class="lib-act">Use in Brief</button><button class="lib-act-s">Tag</button></div></div>
+      </div>
+    </div>
+
+    <!-- INTEGRATIONS -->
+    <div class="screen" id="screen-integrations">
+      <div class="int-count-row">
+        <div class="int-stat"><strong>60</strong> connectors available</div>
+        <div class="int-stat"><strong style="color:var(--green)">4</strong> connected</div>
+        <div class="int-stat"><strong style="color:var(--amber)">8</strong> coming soon</div>
+      </div>
+      <div class="int-toolbar">
+        <input class="int-search" placeholder="Search integrations...">
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">Social Platforms</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">IG</div><div class="int-badge int-badge-conn">Connected</div></div><div class="int-name">Instagram</div><div class="int-desc">Publish posts, reels, carousels directly from ZESTLY.</div><button class="int-btn int-btn-conn">Connected</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">LI</div><div class="int-badge int-badge-conn">Connected</div></div><div class="int-name">LinkedIn</div><div class="int-desc">Schedule and publish brand and founder content.</div><button class="int-btn int-btn-conn">Connected</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">X</div><div class="int-badge int-badge-conn">Connected</div></div><div class="int-name">X (Twitter)</div><div class="int-desc">Post threads and campaign content with one click.</div><button class="int-btn int-btn-conn">Connected</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">TT</div></div><div class="int-name">TikTok</div><div class="int-desc">Push video and slideshow content to TikTok drafts.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">FB</div></div><div class="int-name">Facebook Pages</div><div class="int-desc">Publish and schedule posts to brand pages.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">YT</div></div><div class="int-name">YouTube</div><div class="int-desc">Upload video content and manage channel assets.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">PI</div></div><div class="int-name">Pinterest</div><div class="int-desc">Publish product pins and campaign boards.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">TH</div></div><div class="int-name">Threads</div><div class="int-desc">Cross-post campaign content to Threads.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">Ad Platforms</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">MA</div></div><div class="int-name">Meta Ads</div><div class="int-desc">Push dark post creatives and track ROAS in real time.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">GA</div></div><div class="int-name">Google Ads</div><div class="int-desc">Deploy display and search creatives with asset sync.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">TA</div></div><div class="int-name">TikTok Ads</div><div class="int-desc">Upload video creatives and manage ad sets.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">LA</div></div><div class="int-name">LinkedIn Ads</div><div class="int-desc">Sync creative assets to LinkedIn campaign manager.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">PA</div></div><div class="int-name">Pinterest Ads</div><div class="int-desc">Promote pins with product catalogue integration.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">SA</div></div><div class="int-name">Snapchat Ads</div><div class="int-desc">Deploy vertical video and story ad creatives.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">YA</div></div><div class="int-name">YouTube Ads</div><div class="int-desc">Sync video assets to Google campaign manager.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">DV</div></div><div class="int-name">DV360</div><div class="int-desc">Programmatic display with creative asset sync.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">E-commerce & Marketplaces</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">SH</div></div><div class="int-name">Shopify</div><div class="int-desc">Sync product catalogue and publish assets to store.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">WC</div></div><div class="int-name">WooCommerce</div><div class="int-desc">Push product images directly to your WP store.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">MN</div><div class="int-badge int-badge-soon">Soon</div></div><div class="int-name">Myntra Seller</div><div class="int-desc">Auto-upload catalogue assets to Myntra seller portal.</div><button class="int-btn int-btn-soon">Coming Soon</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">FK</div><div class="int-badge int-badge-soon">Soon</div></div><div class="int-name">Flipkart Seller</div><div class="int-desc">Push PDP images directly to Flipkart listings.</div><button class="int-btn int-btn-soon">Coming Soon</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AM</div></div><div class="int-name">Amazon Seller</div><div class="int-desc">Sync A+ content and product images to Amazon.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">ME</div><div class="int-badge int-badge-soon">Soon</div></div><div class="int-name">Meesho</div><div class="int-desc">Upload product images to Meesho catalogue.</div><button class="int-btn int-btn-soon">Coming Soon</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AJ</div><div class="int-badge int-badge-soon">Soon</div></div><div class="int-name">AJIO</div><div class="int-desc">Sync brand assets to AJIO seller dashboard.</div><button class="int-btn int-btn-soon">Coming Soon</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">BC</div></div><div class="int-name">BigCommerce</div><div class="int-desc">Publish product images and campaign banners.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">WX</div></div><div class="int-name">Wix eCommerce</div><div class="int-desc">Sync product images to Wix store catalogue.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">MG</div></div><div class="int-name">Magento</div><div class="int-desc">Push assets to Magento product pages via API.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">Email & Outreach</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">KL</div></div><div class="int-name">Klaviyo</div><div class="int-desc">Insert campaign visuals directly into email flows.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">MC</div></div><div class="int-name">Mailchimp</div><div class="int-desc">Sync assets to Mailchimp email templates.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">IN</div></div><div class="int-name">Instantly</div><div class="int-desc">Attach brand creatives to cold outreach sequences.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">SG</div></div><div class="int-name">SendGrid</div><div class="int-desc">Push campaign images to transactional email flows.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">BR</div></div><div class="int-name">Brevo</div><div class="int-desc">Embed visuals into Brevo marketing campaigns.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AC</div></div><div class="int-name">ActiveCampaign</div><div class="int-desc">Sync creative assets to email automation workflows.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">HE</div></div><div class="int-name">HubSpot Email</div><div class="int-desc">Insert brand visuals into HubSpot email sequences.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">MJ</div></div><div class="int-name">Mailjet</div><div class="int-desc">Add campaign images to Mailjet template library.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">Analytics & Data</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">G4</div><div class="int-badge int-badge-conn">Connected</div></div><div class="int-name">Google Analytics</div><div class="int-desc">Pull traffic and conversion data into performance reports.</div><button class="int-btn int-btn-conn">Connected</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">SC</div></div><div class="int-name">Search Console</div><div class="int-desc">Monitor SEO and organic performance by page.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">MX</div></div><div class="int-name">Mixpanel</div><div class="int-desc">Track user behaviour and funnel performance.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AM</div></div><div class="int-name">Amplitude</div><div class="int-desc">Product analytics and creative performance correlation.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">HJ</div></div><div class="int-name">Hotjar</div><div class="int-desc">Heatmaps and session recordings for landing pages.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">SG</div></div><div class="int-name">Segment</div><div class="int-desc">Unified customer data pipeline for performance tracking.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">HP</div></div><div class="int-name">Heap</div><div class="int-desc">Auto-capture user events across web and mobile.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">CL</div></div><div class="int-name">Clevertap</div><div class="int-desc">Mobile and web analytics with audience segmentation.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">CRM & Sales</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">HS</div></div><div class="int-name">HubSpot CRM</div><div class="int-desc">Attach campaign assets to deals and contact records.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">SF</div></div><div class="int-name">Salesforce</div><div class="int-desc">Sync brand assets to Salesforce content library.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">ZO</div></div><div class="int-name">Zoho CRM</div><div class="int-desc">Push creatives to Zoho deals and marketing campaigns.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">PD</div></div><div class="int-name">Pipedrive</div><div class="int-desc">Attach visuals to pipeline deals and proposals.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">IC</div></div><div class="int-name">Intercom</div><div class="int-desc">Insert brand visuals into customer messaging flows.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">FS</div></div><div class="int-name">Freshsales</div><div class="int-desc">Sync campaign assets to Freshsales contact timelines.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">Productivity & Storage</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">NO</div></div><div class="int-name">Notion</div><div class="int-desc">Embed campaign briefs and assets into Notion pages.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AT</div></div><div class="int-name">Airtable</div><div class="int-desc">Sync asset metadata and project status to Airtable.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">SL</div></div><div class="int-name">Slack</div><div class="int-desc">Receive delivery alerts and approval requests in Slack.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">GD</div></div><div class="int-name">Google Drive</div><div class="int-desc">Auto-export delivered assets to Drive folders.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">DB</div></div><div class="int-name">Dropbox</div><div class="int-desc">Push final asset batches to Dropbox shared folders.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">MN</div></div><div class="int-name">Monday.com</div><div class="int-desc">Sync project milestones and delivery dates.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">CU</div></div><div class="int-name">ClickUp</div><div class="int-desc">Map ZESTLY project stages to ClickUp tasks.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AS</div></div><div class="int-name">Asana</div><div class="int-desc">Mirror brief and delivery workflow in Asana projects.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+
+      <div class="int-sec">
+        <div class="int-sec-hdr">Creative & DAM</div>
+        <div class="int-grid">
+          <div class="int-card"><div class="int-top"><div class="int-icon">CA</div></div><div class="int-name">Canva</div><div class="int-desc">Export assets directly to Canva brand kits.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">FI</div></div><div class="int-name">Figma</div><div class="int-desc">Push assets into Figma projects and design files.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">CL</div></div><div class="int-name">Cloudinary</div><div class="int-desc">Store and auto-optimize all delivered assets via CDN.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">FR</div></div><div class="int-name">Frame.io</div><div class="int-desc">Collaborative video review and approval workflows.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">AD</div></div><div class="int-name">Adobe Creative</div><div class="int-desc">Sync assets to Adobe CC Libraries and Bridge.</div><button class="int-btn">Connect</button></div>
+          <div class="int-card"><div class="int-top"><div class="int-icon">BF</div></div><div class="int-name">Brandfolder</div><div class="int-desc">Push approved assets to Brandfolder DAM system.</div><button class="int-btn">Connect</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<style>
+.wave-bar{min-height:3px;animation:wave 0.6s infinite alternate}
+@keyframes wave{from{height:3px}to{height:14px}}
+</style>
+
+<script>function selLib(el){el.closest('.lib-cats').querySelectorAll('.lib-cat').forEach(c=>c.classList.remove('active'));el.classList.add('active')}</script>
+
+<script>
+const meta={diana:{t:'Diana — Creative Intelligence',s:'AI Chat · 3 pending items',btn:'New Chat',type:'full'},hub:{t:'Brand Intelligence Hub',s:'Overview — Siyaram\'s India',btn:'+ New Brief',type:'scroll'},brief:{t:'Brief Studio',s:'Step 2 of 5 — Product Focus',btn:'Save Draft',type:'scroll'},projects:{t:'Projects',s:'5 active · 2 in production',btn:'+ New Project',type:'scroll'},assets:{t:'Asset Review',s:'Summer Linen · 32 / 60 approved',btn:'Download All',type:'scroll'},calendar:{t:'Content Calendar',s:'April 2026 · 3 campaigns active',btn:'+ Schedule',type:'scroll'},performance:{t:'Performance Intelligence',s:'90-day lookback · April 2026',btn:'Export Report',type:'scroll'},library:{t:'Product Library',s:'Raw assets · 284 SKUs · Siyaram\'s India',btn:'+ Upload Assets',type:'scroll'},integrations:{t:'Integrations',s:'60 connectors · 4 active',btn:'Browse All',type:'scroll'}};
+
+function go(id,el,type){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const fs=document.getElementById('full-screens');
+  const ss=document.getElementById('scroll-screens');
+  const m=meta[id];
+  const isF=(type||m.type)==='full';
+  fs.style.display=isF?'flex':'none';
+  ss.style.display=isF?'none':'block';
+  document.querySelectorAll('.screen,.screen-full').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.getElementById('tb-t').textContent=m.t;
+  document.getElementById('tb-s').textContent=m.s;
+  document.getElementById('tb-btn').textContent=m.btn;
+}
+
+function toggle(hdr){
+  const body=hdr.nextElementSibling;
+  const arrow=hdr.querySelector('.dr-sec-toggle');
+  const isOpen=!body.classList.contains('collapsed');
+  body.style.maxHeight=isOpen?'0px':body.scrollHeight+'px';
+  body.classList.toggle('collapsed',isOpen);
+  arrow.classList.toggle('open',!isOpen);
+  if(!isOpen)setTimeout(()=>{body.style.maxHeight='none'},260);
+}
+document.querySelectorAll('.dr-body').forEach(b=>{b.style.maxHeight='none'});
+
+function selOpt(el){el.closest('.form-grid').querySelectorAll('.form-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel')}
+function selDir(card){document.querySelectorAll('.dir-card').forEach(c=>c.classList.remove('sel'));card.classList.add('sel');document.getElementById('dir-confirm').textContent=card.querySelector('.dir-name').textContent+' selected · 48h to first delivery'}
+function selTab(el){el.closest('.ch-tabs').querySelectorAll('.ch-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')}
+function approve(btn){const item=btn.closest('.asset');item.querySelectorAll('.a-appr,.a-rej').forEach(e=>e.remove());const b=document.createElement('div');b.className='a-appr';b.textContent='✓ Approved';item.appendChild(b)}
+
+// Recommendation dismiss
+function dismissCard(id){
+  const card=document.getElementById(id);
+  card.style.transition='opacity .3s, transform .3s';
+  card.style.opacity='0';
+  card.style.transform='scale(0.97)';
+  setTimeout(()=>{card.style.display='none'},300);
+}
+
+// Voice toggle
+let voiceOn=false;
+function toggleVoice(){
+  voiceOn=!voiceOn;
+  const btn=document.getElementById('voice-btn');
+  const status=document.getElementById('voice-status');
+  btn.classList.toggle('voice-active',voiceOn);
+  status.style.display=voiceOn?'flex':'none';
+  if(!voiceOn){
+    const inp=document.getElementById('diana-inp');
+    if(!inp.value)inp.value='Voice message recorded';
+  }
+}
+
+// File upload
+function triggerUpload(){document.getElementById('file-input').click()}
+function handleFile(input){
+  if(!input.files.length)return;
+  const f=input.files[0];
+  document.getElementById('attach-name').textContent=f.name;
+  document.getElementById('attach-preview').classList.add('show');
+}
+function removeAttach(){
+  document.getElementById('attach-preview').classList.remove('show');
+  document.getElementById('file-input').value='';
+}
+
+// Chat
+const replies=["Got it. I'll add that to the production queue and flag the Creative Director.","Based on your performance data, I'd recommend Heritage Warmth for this. Want me to pre-fill a brief?","Noted. I'll update the brand knowledge base with that preference.","I can have 3 direction options ready for approval within 24 hours. Should I proceed?","Done. The team has been notified and the calendar has been updated."];
+let ri=0;
+function sendMsg(){
+  const inp=document.getElementById('diana-inp');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  const msgs=document.getElementById('diana-msgs');
+  const ti=document.getElementById('typing-indicator');
+  const um=document.createElement('div');
+  um.className='msg msg-u';
+  um.innerHTML='<div class="msg-ava">S</div><div class="msg-body"><div class="msg-sender">You · just now</div><div class="msg-bubble">'+txt+'</div></div>';
+  msgs.insertBefore(um,ti);
+  inp.value='';
+  removeAttach();
+  ti.style.display='flex';
+  msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{
+    ti.style.display='none';
+    const dm=document.createElement('div');
+    dm.className='msg msg-d';
+    dm.innerHTML='<div class="msg-ava">D</div><div class="msg-body"><div class="msg-sender">Diana · just now</div><div class="msg-bubble">'+replies[ri%replies.length]+'</div></div>';
+    msgs.insertBefore(dm,ti);
+    msgs.scrollTop=msgs.scrollHeight;
+    ri++;
+  },1400);
+}
+document.getElementById('diana-inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
+
+/* ── MOBILE NAV ── */
+function toggleSidebar(){
+  const sb=document.getElementById('main-sidebar');
+  const bd=document.getElementById('mob-backdrop');
+  const open=sb.classList.toggle('mob-open');
+  bd.classList.toggle('show',open);
+  document.body.style.overflow=open?'hidden':'';
+}
+function closeSidebar(){
+  document.getElementById('main-sidebar').classList.remove('mob-open');
+  document.getElementById('mob-backdrop').classList.remove('show');
+  document.body.style.overflow='';
+}
+// Close sidebar after nav click on mobile
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{if(window.innerWidth<=900)closeSidebar()});
+});
+
+/* ── MOBILE SUB-SIDEBAR TOGGLES ── */
+// Calendar sub-sidebar: tap header to expand
+const cvSS=document.querySelector('.cv-sub-sidebar');
+const cvLayout=document.querySelector('.cv-layout');
+if(cvSS&&cvLayout){
+  const cvHdr=cvSS.querySelector('.cv-ss-hdr');
+  if(cvHdr){
+    cvHdr.addEventListener('click',()=>{
+      if(window.innerWidth<=900)cvLayout.classList.toggle('mob-cal-open');
+    });
+  }
+}
+
+// Performance sub-sidebar: tap header to expand
+const prSB=document.querySelector('.pr-sidebar');
+const prLayout=document.querySelector('.pr-layout');
+if(prSB&&prLayout){
+  const prHdr=prSB.querySelector('.pr-sb-hdr');
+  if(prHdr){
+    prHdr.addEventListener('click',()=>{
+      if(window.innerWidth<=900)prLayout.classList.toggle('mob-pr-open');
+    });
+  }
+}
+
+// Close sub-sidebars when resizing to desktop
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>900){
+    closeSidebar();
+    if(cvLayout)cvLayout.classList.remove('mob-cal-open');
+    if(prLayout)prLayout.classList.remove('mob-pr-open');
+    document.body.style.overflow='';
+  }
+});
+</script>
+</body>
+</html>
